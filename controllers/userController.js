@@ -1,7 +1,12 @@
-const User = require("../models/User");
+import mongoose from "mongoose";
+import User from "../models/User.js";
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
 // GET /api/users/:id
-exports.getUser = async (req, res) => {
+const getUser = async (req, res) => {
   try {
     const user = await User.findById(req.params.id);
     res.json(user);
@@ -11,7 +16,7 @@ exports.getUser = async (req, res) => {
 };
 
 // GET /api/users
-exports.getAllUsers = async (req, res) => {
+const getAllUsers = async (req, res) => {
   try {
     const users = await User.find();
     res.json(users);
@@ -21,7 +26,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 // PUT /api/users/:id
-exports.updateUser = async (req, res) => {
+const updateUser = async (req, res) => {
   try {
     const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
@@ -31,7 +36,7 @@ exports.updateUser = async (req, res) => {
 };
 
 // DELETE /api/users/:id
-exports.deleteUser = async (req, res) => {
+const deleteUser = async (req, res) => {
   try {
     await User.findByIdAndDelete(req.params.id);
     res.json({ message: "User deleted" });
@@ -41,7 +46,7 @@ exports.deleteUser = async (req, res) => {
 };
 
 // POST /api/users/signUp
-exports.signUp = async (req, res) => {
+const signUp = async (req, res) => {
   try {
     const user = new User(req.body);
     await user.save();
@@ -52,7 +57,7 @@ exports.signUp = async (req, res) => {
 };
 
 // POST /api/users/signIn
-exports.signIn = async (req, res) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
   try {
     const user = await User.findOne({ email, password });
@@ -64,7 +69,9 @@ exports.signIn = async (req, res) => {
 };
 
 // POST /api/users/signOut
-exports.signOut = async (req, res) => {
+const signOut = async (req, res) => {
   // Add session/token logic if needed
   res.json({ message: "Signed out successfully" });
 };
+
+export {getUser,getAllUsers,updateUser,deleteUser,signUp, signIn, signOut}

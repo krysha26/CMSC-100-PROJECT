@@ -1,7 +1,12 @@
-const Order = require("../models/Order");
+import mongoose from "mongoose";
+import Order from '../models/Order.js';
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
 // GET /api/orders/:id
-exports.getOrder = async (req, res) => {
+const getOrder = async (req, res) => {
   try {
     const order = await Order.findById(req.params.id).populate("productId");
     res.json(order);
@@ -11,7 +16,7 @@ exports.getOrder = async (req, res) => {
 };
 
 // GET /api/orders/user/:email
-exports.getOrderByUser = async (req, res) => {
+const getOrderByUser = async (req, res) => {
   try {
     const orders = await Order.find({ email: req.params.email }).populate("productId");
     res.json(orders);
@@ -21,7 +26,7 @@ exports.getOrderByUser = async (req, res) => {
 };
 
 // GET /api/orders
-exports.getAllOrders = async (req, res) => {
+const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find().populate("productId");
     res.json(orders);
@@ -31,7 +36,7 @@ exports.getAllOrders = async (req, res) => {
 };
 
 // POST /api/orders
-exports.addOrder = async (req, res) => {
+const addOrder = async (req, res) => {
   try {
     const order = new Order(req.body);
     await order.save();
@@ -42,7 +47,7 @@ exports.addOrder = async (req, res) => {
 };
 
 // PUT /api/orders/:id
-exports.updateOrder = async (req, res) => {
+const updateOrder = async (req, res) => {
   try {
     const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
@@ -52,7 +57,7 @@ exports.updateOrder = async (req, res) => {
 };
 
 // DELETE /api/orders/:id
-exports.deleteOrder = async (req, res) => {
+const deleteOrder = async (req, res) => {
   try {
     await Order.findByIdAndDelete(req.params.id);
     res.json({ message: "Order deleted" });
@@ -60,3 +65,5 @@ exports.deleteOrder = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export {getOrder, getOrderByUser, getAllOrders, addOrder, updateOrder, deleteOrder};

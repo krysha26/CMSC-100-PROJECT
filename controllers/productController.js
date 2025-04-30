@@ -1,7 +1,12 @@
-const Product = require("../models/Product");
+import mongoose from "mongoose";
+import Product from '../models/Product.js';
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
 
 // GET /api/products/:id
-exports.getProduct = async (req, res) => {
+const getProduct = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
     res.json(product);
@@ -11,7 +16,7 @@ exports.getProduct = async (req, res) => {
 };
 
 // GET /api/products
-exports.getAllProducts = async (req, res) => {
+const getAllProducts = async (req, res) => {
   try {
     const products = await Product.find();
     res.json(products);
@@ -21,7 +26,7 @@ exports.getAllProducts = async (req, res) => {
 };
 
 // POST /api/products
-exports.addProduct = async (req, res) => {
+const addProduct = async (req, res) => {
   try {
     const product = new Product(req.body);
     await product.save();
@@ -32,7 +37,7 @@ exports.addProduct = async (req, res) => {
 };
 
 // PUT /api/products/:id
-exports.updateProduct = async (req, res) => {
+const updateProduct = async (req, res) => {
   try {
     const updated = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true });
     res.json(updated);
@@ -42,7 +47,7 @@ exports.updateProduct = async (req, res) => {
 };
 
 // DELETE /api/products/:id
-exports.deleteProduct = async (req, res) => {
+const deleteProduct = async (req, res) => {
   try {
     await Product.findByIdAndDelete(req.params.id);
     res.json({ message: "Product deleted" });
@@ -50,3 +55,5 @@ exports.deleteProduct = async (req, res) => {
     res.status(400).json({ error: err.message });
   }
 };
+
+export {getProduct,getAllProducts,addProduct,updateProduct,deleteProduct}
