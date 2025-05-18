@@ -1,12 +1,7 @@
-import mongoose from "mongoose";
 import User from "../models/User.js";
 import argon2 from 'argon2';
 // import bcrypt from "bcryptjs";
 // import jwt from "jsonwebtoken";
-
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
 
 // GET /api/users/:id
 const getUser = async (req, res) => {
