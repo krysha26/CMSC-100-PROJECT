@@ -1,0 +1,29 @@
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 26px 39px 26px 26px;
+  background: transparent;
+  box-shadow: 4px 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.admin-header-title {
+  font-size: 24px;
+  font-weight: 600;
+  font-family: 'Poppins', sans-serif;
+  color: #23231e;
+}
+
+.admin-header-actions {
+  display: flex;
+  gap: 16px;
+}
+
+.admin-header-circle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: #e2e1db;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
