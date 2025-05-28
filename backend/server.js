@@ -11,7 +11,16 @@ dotenv.config();
 const uri = process.env.MONGODB_URI;
 console.log(uri);
 
+
+
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB error:", err));
+
 const app = express();
+app.use(cors({ origin: '*', credentials: true }));
+
+
 
 app.use(cors());
 
@@ -21,9 +30,7 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
+
 
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);
