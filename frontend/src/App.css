@@ -1,16 +1,9 @@
+@import "tailwindcss";
 
-html, body, #root {
-  margin: 0;
-  height: 100%;
-  width: 100%;
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
-
-body {
-  background-color: rgb(255, 255, 255);
-  color: white;
-  
-}
 
 @font-face {
   font-family: 'PoppinsB';
@@ -20,73 +13,4 @@ body {
 @font-face {
   font-family: 'Poppins';
   src: url(assets/fonts/poppins/Poppins-Medium.ttf);
-}
-
-.mainContainer {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr;
-  height: 100%; 
-  width: 100%;
-  font-family: 'Poppins';
-}
-
-
-.imageContainer {
-  background-color: #ffffff;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: white;
-  font-size: 1.5rem;
-}
-
-.imageContainer {
-  background-image: url('assets/img/bgtest.jpg');
-  background-repeat: no-repeat;
-  background-size: cover;
-}
-
-.container {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  padding: 10rem;
-  background-color: white;
-  color: black;
-  font-family: 'Poppins';
-}
-
-.container p {
-  font-size: 12px;
-}
-
-.form input {
-  display: block;
-  width: 100%;
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-radius: 4px;
-  border: 1px solid #ccc;
-  color: black;
-  background-color: rgb(255, 255, 255);
-}
-
-button {
-  width: 100%;
-  padding: 0.6rem;
-  background-color: #5a8a23;
-  color: white;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-family: 'Poppins';
-}
-
-button:hover {
-  background-color: #54a927;
-}
-
-h1 {
-  font-family: 'PoppinsB';
-  
 }

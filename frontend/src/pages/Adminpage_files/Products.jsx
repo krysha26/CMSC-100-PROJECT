@@ -1,8 +1,5 @@
 import { useEffect, useState } from 'react';
 import axios from 'axios';
-import AdminNavbar from './AdminNavbar';
-import AdminHeader from './AdminHeader';
-import './AccountManagement.css';
 import './Products.css';
 
 function Products() {
@@ -91,105 +88,95 @@ function Products() {
   };
 
   return (
-    <div className="adminpage-container">
-      <div className="adminpage-navbar">
-        <AdminNavbar />
+    <div className="adminpage-content-container">
+      <h2>Product Inventory</h2>
+
+      {/* Add Product Form */}
+      <form onSubmit={handleAddProduct} className="add-product-form">
+        <input
+          type="text"
+          name="productName"
+          placeholder="Name"
+          value={newProduct.productName}
+          onChange={handleInputChange}
+          required
+        />
+        <select
+          name="productType"
+          value={newProduct.productType}
+          onChange={handleInputChange}
+        >
+          <option value={1}>Crop</option>
+          <option value={2}>Poultry</option>
+        </select>
+        <input
+          type="number"
+          name="productPrice"
+          placeholder="Price"
+          value={newProduct.productPrice}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="text"
+          name="productDescription"
+          placeholder="Description"
+          value={newProduct.productDescription}
+          onChange={handleInputChange}
+          required
+        />
+        <input
+          type="number"
+          name="productQuantity"
+          placeholder="Quantity"
+          value={newProduct.productQuantity}
+          onChange={handleInputChange}
+          required
+        />
+        <button type="submit">Add Product</button>
+      </form>
+
+      {/* Sort Controls */}
+      <div className="sort-controls">
+        <label>Sort by:</label>
+        {['productName', 'productType', 'productPrice', 'productQuantity'].map((key) => (
+          <button key={key} onClick={() => sortProducts(key)}>
+            {key.replace('product', '')} {sortKey === key ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
+          </button>
+        ))}
       </div>
-      <div className="adminpage-content">
-        <div className="adminpage-content-header">
-          <AdminHeader />
-        </div>
-        <div className="adminpage-content-container">
-          <h2>Product Inventory</h2>
 
-          {/* Add Product Form */}
-          <form onSubmit={handleAddProduct} className="add-product-form">
-            <input
-              type="text"
-              name="productName"
-              placeholder="Name"
-              value={newProduct.productName}
-              onChange={handleInputChange}
-              required
-            />
-            <select
-              name="productType"
-              value={newProduct.productType}
-              onChange={handleInputChange}
-            >
-              <option value={1}>Crop</option>
-              <option value={2}>Poultry</option>
-            </select>
-            <input
-              type="number"
-              name="productPrice"
-              placeholder="Price"
-              value={newProduct.productPrice}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="text"
-              name="productDescription"
-              placeholder="Description"
-              value={newProduct.productDescription}
-              onChange={handleInputChange}
-              required
-            />
-            <input
-              type="number"
-              name="productQuantity"
-              placeholder="Quantity"
-              value={newProduct.productQuantity}
-              onChange={handleInputChange}
-              required
-            />
-            <button type="submit">Add Product</button>
-          </form>
-
-          {/* Sort Controls */}
-          <div className="sort-controls">
-            <label>Sort by:</label>
-            {['productName', 'productType', 'productPrice', 'productQuantity'].map((key) => (
-              <button key={key} onClick={() => sortProducts(key)}>
-                {key.replace('product', '')} {sortKey === key ? (sortOrder === 'asc' ? '↑' : '↓') : ''}
-              </button>
-            ))}
-          </div>
-
-          {/* Product Table */}
-          <table className="products-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Type</th>
-                <th>Price (₱)</th>
-                <th>Description</th>
-                <th>Quantity</th>
-                <th>Action</th>
+      {/* Product Table */}
+      <table className="products-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Type</th>
+            <th>Price (₱)</th>
+            <th>Description</th>
+            <th>Quantity</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {products.length === 0 ? (
+            <tr><td colSpan="6">No products found.</td></tr>
+          ) : (
+            products.map(product => (
+              <tr key={product._id}>
+                <td>{product.productName}</td>
+                <td>{renderType(product.productType)}</td>
+                <td>₱{product.productPrice}</td>
+                <td>{product.productDescription}</td>
+                <td>{product.productQuantity}</td>
+                <td>
+                  <button onClick={() => handleDeleteProduct(product._id)}>Delete</button>
+                </td>
               </tr>
-            </thead>
-            <tbody>
-              {products.length === 0 ? (
-                <tr><td colSpan="6">No products found.</td></tr>
-              ) : (
-                products.map(product => (
-                  <tr key={product._id}>
-                    <td>{product.productName}</td>
-                    <td>{renderType(product.productType)}</td>
-                    <td>₱{product.productPrice}</td>
-                    <td>{product.productDescription}</td>
-                    <td>{product.productQuantity}</td>
-                    <td>
-                      <button onClick={() => handleDeleteProduct(product._id)}>Delete</button>
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-      </div>
+            ))
+          )}
+        </tbody>
+      </table>
     </div>
   );
 }

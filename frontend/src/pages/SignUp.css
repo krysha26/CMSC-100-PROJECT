@@ -1,14 +1,11 @@
+/* Global styles that should be in App.css or index.css */
 html, body, #root {
   margin: 0;
   height: 100%;
   width: 100%;
 }
 
-body {
-  background-color: rgb(255, 255, 255);
-  color: white;
-}
-
+/* Font declarations */
 @font-face {
   font-family: 'PoppinsB';
   src: url(../assets/fonts/poppins/Poppins-ExtraBold.ttf);
@@ -19,7 +16,8 @@ body {
   src: url(../assets/fonts/poppins/Poppins-Medium.ttf);
 }
 
-.mainContainer {
+/* Sign Up specific styles */
+.signup {
   display: grid;
   grid-template-columns: 1.5fr 1fr;
   height: 100%; 
@@ -27,7 +25,7 @@ body {
   font-family: 'Poppins';
 }
 
-.imageContainer {
+.signup__image-section {
   background-color: #ffffff;
   display: flex;
   align-items: center;
@@ -39,7 +37,7 @@ body {
   background-size: cover;
 }
 
-.container {
+.signup__form-section {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -49,11 +47,15 @@ body {
   font-family: 'Poppins';
 }
 
-.container p {
+.signup__form-section p {
   font-size: 12px;
 }
 
-.form input {
+.signup__form {
+  width: 100%;
+}
+
+.signup__form-input {
   display: block;
   width: 100%;
   margin-bottom: 1rem;
@@ -64,7 +66,13 @@ body {
   background-color: rgb(255, 255, 255);
 }
 
-button {
+.signup__form-input:focus {
+  outline: none;
+  border-color: #5a8a23;
+  box-shadow: 0 0 0 2px rgba(90, 138, 35, 0.1);
+}
+
+.signup__submit-button {
   width: 100%;
   padding: 0.6rem;
   background-color: #5a8a23;
@@ -73,12 +81,26 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Poppins';
+  transition: background-color 0.2s;
 }
 
-button:hover {
+.signup__submit-button:hover {
   background-color: #54a927;
 }
 
-h1 {
+.signup__title {
   font-family: 'PoppinsB';
+  margin-bottom: 1.5rem;
+  color: #23231e;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+  .signup {
+    grid-template-columns: 1fr;
+  }
+
+  .signup__form-section {
+    padding: 2rem;
+  }
 } 
