@@ -1,9 +1,4 @@
-import mongoose from "mongoose";
 import Product from '../models/Product.js';
-
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected"))
-  .catch((err) => console.error("MongoDB error:", err));
 
 // GET /api/products/:id
 const getProduct = async (req, res) => {

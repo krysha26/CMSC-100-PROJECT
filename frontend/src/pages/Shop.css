@@ -1,0 +1,62 @@
+.shopSection {
+    color: #1a1a1a;
+    font-family: 'Poppins';
+
+}
+
+.foodSection {
+    margin: 70px;
+    margin-top: 30px;
+    
+}
+
+
+.titleSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: -20px;
+}
+.productSection, .productItem {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 50px;
+    color: #1a1a1a;
+}
+
+.productItem {
+    gap: 10px;
+}
+
+
+.product {
+    font-size: 25px;
+    color: #1D8B37;
+}
+
+/* General styles */
+
+p {
+    font-size: 13px;
+    color: #1D8B37;
+}
+
+h3 {
+    font-size: 30px;
+}
+
+.buttonRd {
+  border-radius: 8px;
+  padding: 3px 20px; /* vertical and horizontal padding */
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  font-size: 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
