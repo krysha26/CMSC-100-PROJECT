@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import argon2 from 'argon2';
 // import bcrypt from "bcryptjs";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 // GET /api/users/:id
 const getUser = async (req, res) => {
@@ -74,20 +74,30 @@ const signUp = async (req, res) => {
 
 // POST /api/users/signIn
 const signIn = async (req, res) => {
+  
   const { email, password } = req.body;
+    
   try {
+    
+    console.log("Request body:", email);
+    console.log("Request pw:", password);
+    
+    
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid email" });
-
-    const isMatch = await argon2.verify(password, user.password);
+    console.log("Request body:", user.password);
+    console.log("user id", user._id);
+    const isMatch = await argon2.verify(user.password, password);
+    console.log("match:",isMatch);// Changed positioning of hashed password and entered password
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { // ADD API IN .ENV
       expiresIn: "1d", // Token expiration
     });
+    console.log("token here:" ,token);
   
     res.status(200).json({
       token,
-      user: { id: user._id, email: user.email }
+      user: { id: user._id }
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

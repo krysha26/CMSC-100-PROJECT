@@ -2,32 +2,43 @@ import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { Link } from 'react-router-dom';
-
 import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import './SignUp.css';
 
 function SignIn() {
-    const [email,setEmail] = useState ('');
-    const [password, setPassword] = useState('');
+    const [email,setEmail] = useState ("");
+    const [password, setPassword] = useState("");
 
     const navigate = useNavigate ();
     const handleSignIn = async (e) => {
-        e.preventDefault();
-     try{
-      await axios.post('http://localhost:5000/api/users/signIn', {
-      email: email,
-      password: password,});
+    e.preventDefault();
+    console.log("Signing in with:", { email, password });
+
+    try { // TO-DO: Uncomment later
+      // const response = await axios.post('http://localhost:5000/api/users/signIn', {
+      //   email,
+      //   password
+      // });
+
+      // const { token, user } = response.data;
+
+      // // Optional: Store token in localStorage or cookie
+      // localStorage.setItem("token", token);
+
       toast.success("Sign in successful!", {
         autoClose: 1000,
-        onClose: () => navigate('/shop') // Navigate to shop
-
+        onClose: () => navigate('/shop') // redirect after toast
       });
-      
-    }catch(error) {
-      toast.error("Sign in failed. Please try again");
+
+    } catch (error) {
+      // If backend returns a specific message
+      const errorMessage = error?.response?.data?.message || "Sign in failed";
+      toast.error(errorMessage, { autoClose: 1500 });
+      console.error("Sign-in error:", error);
     }
-    }
+  };
+
 
     return (
     <div className='mainContainer'>
@@ -51,7 +62,7 @@ function SignIn() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type='submit'>Sign In</button>
+          <button type='submit' >Sign In</button>
           <p className='pLabel'> New to anico? <Link to="/signUp" >Create an account.</Link></p>
         </form>
         <ToastContainer/>
