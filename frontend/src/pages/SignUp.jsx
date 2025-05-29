@@ -1,12 +1,17 @@
 import { useState } from 'react';
+import { ToastContainer, toast } from 'react-toastify';
+import { useNavigate } from 'react-router-dom';
+import 'react-toastify/dist/ReactToastify.css';
 import axios from 'axios';
 import './SignUp.css';
+
 
 function SignUp() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const [message, setMessage] = useState('');
+  
 
+  const navigate = useNavigate();
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
@@ -48,9 +53,9 @@ function SignUp() {
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type='submit' className='signup__submit-button'>Sign Up</button>
+          <button type='submit'>Sign Up</button>
         </form>
-        {message && <p>{message}</p>}
+        <ToastContainer/>
       </div>
     </div>
   );

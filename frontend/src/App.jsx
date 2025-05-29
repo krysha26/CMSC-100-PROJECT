@@ -2,6 +2,7 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Shop from "./pages/Shop";
 import SignUp from "./pages/SignUp";
+import SignIn from "./pages/SignIn"
 import AdminLayout from "./pages/Adminpage_files/AdminLayout";
 import AccountManagement from "./pages/Adminpage_files/account-management/AccountManagement";
 import Products from "./pages/Adminpage_files/products/Products";
@@ -9,9 +10,13 @@ import AdminOrder from "./pages/Adminpage_files/orders/AdminOrder";
 import AdminReport from "./pages/Adminpage_files/AdminReport";
 
 function App() {
-  const routes = [
+  const routes = [ // Add child parameter
     {
       path: "/",
+      element: <SignIn />,
+    },
+    {
+      path:"/signUp",
       element: <SignUp />,
     },
     {
