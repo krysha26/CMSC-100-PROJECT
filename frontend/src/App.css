@@ -13,4 +13,11 @@
 @font-face {
   font-family: 'Poppins';
   src: url(assets/fonts/poppins/Poppins-Medium.ttf);
+<<<<<<<<< Temporary merge branch 1
 }
+
+@font-face {
+  font-family: 'PoppinsR';
+  src: url(assets/fonts/poppins/Poppins-Regular.ttf);
+}
+

@@ -1,5 +1,7 @@
 import User from "../models/User.js";
 import argon2 from 'argon2';
+import mongoose from "mongoose";
+
 // import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
@@ -36,16 +38,28 @@ const updateUser = async (req, res) => {
   }
 };
 
-// DELETE /api/users/:id
+// In controller
 const deleteUser = async (req, res) => {
+  const { id } = req.params;
+
+  // Add this:
+  console.log('Received ID:', id);
+  console.log('Valid ObjectId:', mongoose.Types.ObjectId.isValid(id));
+
+  if (!mongoose.Types.ObjectId.isValid(id)) {
+    console.log('Invalid ObjectId:', id);
+    return res.status(400).json({ message: 'Invalid user ID format' });
+  }
+
   try {
-    await User.findByIdAndDelete(req.params.id);
+    const deleted = await User.findByIdAndDelete(id);
     if (!deleted) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: 'User not found' });
     }
-    res.json({ message: "User deleted" });
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error('Error deleting user:', err);
+    res.status(500).json({ error: 'Failed to delete user' });
   }
 };
 
@@ -82,7 +96,7 @@ const signIn = async (req, res) => {
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid email" });
 
-    const isMatch = await argon2.verify(password, user.password);
+    const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
       expiresIn: "1d", // Token expiration
