@@ -16,8 +16,6 @@ mongoose.connect(process.env.MONGODB_URI)
 const app = express();
 app.use(cors({ origin: '*', credentials: true }));
 
-
-
 app.use(cors());
 
 app.use(express.json());
@@ -25,8 +23,6 @@ app.use(express.json());
 app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
-
-
 
 app.use("/api/orders", orderRoutes);
 app.use("/api/users", userRoutes);

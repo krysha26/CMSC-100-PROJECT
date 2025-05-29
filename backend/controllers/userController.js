@@ -25,7 +25,18 @@ const getAllUsers = async (req, res) => {
 // PUT /api/users/:id
 const updateUser = async (req, res) => {
   try {
-    const updated = await User.findByIdAndUpdate(req.params.id, req.body, { new: true });
+    const { firstName, lastName, email, password } = req.body || {};
+    if (!password) { 
+      const hashedPassword = await argon2.hash(password); 
+      const updated = await User.findByIdAndUpdate(
+        req.params.id, { firstName, lastName, email, password:hashedPassword}, 
+        { new: true });
+    }
+    else{ 
+      const updated = await User.findByIdAndUpdate(
+        req.params.id, { firstName, lastName, email }, 
+        { new: true });
+    }
     if (!updated) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -57,12 +68,7 @@ const deleteUser = async (req, res) => {
 // POST /api/users/signUp
 const signUp = async (req, res) => {
   try {
-    console.log(req.body);
     const { firstName, lastName, email, password } = req.body || {};
-    console.log(firstName);
-    console.log(lastName);
-    console.log(email);
-    console.log(password);
     if (!firstName || !lastName || !email || !password){
       return res.status(400).json({ message: "Missing Essential Field" });
     }
@@ -71,13 +77,12 @@ const signUp = async (req, res) => {
     if (existing) return res.status(400).json({ message: "User already exists" });
     else{ 
       const hashedPassword = await argon2.hash(password);
-      user = new User({firstName, lastName, email, password: hashedPassword });
+      user = new User({firstName, lastName, userType: "User", email, password: hashedPassword });
       await user.save(); // to save user
     }
-    res.status(201).json(user);
-    const token = jwt.sign({ id: user._id }, JWT_LOGIN_SECRET, {expiresIn: "1d"});
+    const token = jwt.sign({ id: user._id }, process.env.JWT_LOGIN_SECRET, {expiresIn: "1d"});
     res.status(200).json({
-      token,
+      token: req.token,
       user: { id: user._id, email: user.email }
     });
   } catch (err) {
@@ -88,29 +93,18 @@ const signUp = async (req, res) => {
 // POST /api/users/signIn
 const signIn = async (req, res) => {
   try {
-    const { email, password } = req.body || {};
-    if (!email || !password){
-      return res.status(400).json({ message: "Missing Email and Password" });
-    }
+    const { email, password } = req.body;
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid email" });
-    const isMatch = await argon2.verify(password, user.password);
+    const isMatch = await argon2.verify(user.password, password);
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
     if (user.userType == "Admin"){
-      const mastertoken = jwt.sign({ id: user._id }, process.env.JWT_ROUTE_SECRET, {
-        expiresIn: "1d", // Token expiration
-      });
-      res.status(200).json({
-        mastertoken,
-        user: { id: user._id, email: user.email }
-      });
+      const mastertoken = jwt.sign({ id: user._id }, process.env.JWT_ROUTE_SECRET, { expiresIn: "1d", });
+      res.status(200).json({ mastertoken: token, user: { id: user._id, email: user.email } });
     }
     else {
-      const token = jwt.sign({ id: user._id }, JWT_LOGIN_SECRET, {expiresIn: "1d"});
-      res.status(200).json({
-        token,
-        user: { id: user._id, email: user.email }
-      });
+      const token = jwt.sign({ id: user._id }, process.env.JWT_LOGIN_SECRET, { expiresIn: '1d' });
+      res.status(200).json({ token: token, user: { id: user._id, email: user.email } });
     }
   } catch (err) {
     res.status(500).json({ error: err.message });
