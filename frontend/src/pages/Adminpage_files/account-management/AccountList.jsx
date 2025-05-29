@@ -1,5 +1,5 @@
 import React from 'react';
-import Icons from '../../components/common/Icons';
+import Icons from '../../../components/common/Icons';
 import axios from 'axios';
 
 

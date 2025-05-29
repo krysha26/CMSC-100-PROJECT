@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import AdminHeader from '../AdminHeader';
 import AccountList from './AccountList';
-import farmerImage from '../../assets/img/farmer.jpg';
-import farmerImage1 from '../../assets/img/farmer1.jpg';
-import farmerImage2 from '../../assets/img/farmer2.jpg';
-import farmerImage3 from '../../assets/img/farmer3.webp';
-import farmerImage4 from '../../assets/img/farmer4.jpeg';
-import farmerImage5 from '../../assets/img/farmer5.avif';
+import farmerImage from '../../../assets/img/farmer.jpg';
+import farmerImage1 from '../../../assets/img/farmer1.jpg';
+import farmerImage2 from '../../../assets/img/farmer2.jpg';
+import farmerImage3 from '../../../assets/img/farmer3.webp';
+import farmerImage4 from '../../../assets/img/farmer4.jpeg';
+import farmerImage5 from '../../../assets/img/farmer5.avif';
 import axios from 'axios';
 
 const farmerImages = [
@@ -29,7 +29,7 @@ const AccountManagement = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/users/');
+        const response = await axios.get('https://anico-api.vercel.app/api/users');
         console.log("Fetched users:", response.data);  // The data is in response.data
         setAccounts(response.data);  // Update the state with the fetched accounts
       } catch (error) {
@@ -73,7 +73,7 @@ const handleDeleteAccount = async (accountId) => {
   try {
     console.log("Attempting to delete account with ID:", accountId);
 
-    const response = await axios.delete(`http://localhost:5000/api/users/${accountId}`);
+    const response = await axios.delete(`https://anico-api.vercel.app/api/users/${accountId}`);
 
     if (response.status === 200) {
       const updatedAccounts = accounts.filter(acc => String(acc._id) !== String(accountId));
@@ -84,12 +84,7 @@ const handleDeleteAccount = async (accountId) => {
     }
   } catch (error) {
     console.error(`Failed to delete account with ID ${accountId}:`, error);
-  }
-};
-
-
-
-
+   } }
 
   return (
     <div className="account-management-page min-h-screen">
@@ -101,9 +96,9 @@ const handleDeleteAccount = async (accountId) => {
             <div className="h-[calc(100%-80px)]">
               {/* Pass the accounts and the delete handler as props to AccountList */}
               <AccountList accounts={accounts} onDeleteAccount={handleDeleteAccount} />
+            </div>
           </div>
         </div>
-
         <div className="w-1/3 relative rounded-lg overflow-hidden flex-shrink-0 h-[calc(100vh-180px)] shadow-md transform transition-all duration-300 ease-in-out hover:scale-101 hover:shadow-xl">
           <div
             className="absolute inset-0 bg-cover bg-center"
