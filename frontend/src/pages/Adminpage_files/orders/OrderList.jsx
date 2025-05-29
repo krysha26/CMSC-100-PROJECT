@@ -77,25 +77,25 @@ const OrderList = ({ orders, onUpdateStatus }) => {
       case 'all':
         return (
           <div className="flex items-center space-x-1">
-            -
+            <span className="w-2.5 h-2.5 rounded-full border border-gray-500"></span>
           </div>
         );
       case 'pending':
         return (
           <div className="flex items-center">
-            <span className="w-2 h-2 rounded-full bg-yellow-400"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-yellow-400"></span>
           </div>
         );
       case 'completed':
         return (
           <div className="flex items-center">
-            <span className="w-2 h-2 rounded-full bg-green-400"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-green-400"></span>
           </div>
         );
       case 'canceled':
         return (
           <div className="flex items-center">
-            <span className="w-2 h-2 rounded-full bg-red-400"></span>
+            <span className="w-2.5 h-2.5 rounded-full bg-red-400"></span>
           </div>
         );
       default:
@@ -132,8 +132,8 @@ const OrderList = ({ orders, onUpdateStatus }) => {
           onClick={() => sortOrders('orderStatus')}
           className="flex items-center space-x-2 text-left hover:text-gray-800"
         >
-          <span>Status</span>
           {getStatusFilterIcon()}
+          <span>Status</span>
         </button>
         <button 
           onClick={() => sortOrders('productId')}

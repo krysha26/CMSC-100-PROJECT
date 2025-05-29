@@ -68,31 +68,31 @@ const ReportList = ({ orders }) => {
       <div className="flex-none grid grid-cols-[2fr_1fr_2fr_2fr_1.5fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10">
         <button 
           onClick={() => sortOrders('productId')}
-          className="text-left hover:text-gray-800"
+          className="text-left hover:text-gray-800 cursor-pointer"
         >
           Product Name {sortConfig.key === 'productId' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
         <button 
           onClick={() => sortOrders('orderQuantity')}
-          className="text-left hover:text-gray-800"
+          className="text-left hover:text-gray-800 cursor-pointer"
         >
           Quantity {sortConfig.key === 'orderQuantity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
         <button 
           onClick={() => sortOrders('email')}
-          className="text-left hover:text-gray-800"
+          className="text-left hover:text-gray-800 cursor-pointer"
         >
           Customer Email {sortConfig.key === 'email' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
         <button 
           onClick={() => sortOrders('dateOrdered')}
-          className="text-left hover:text-gray-800"
+          className="text-left hover:text-gray-800 cursor-pointer"
         >
           Date & Time {sortConfig.key === 'dateOrdered' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
         <button 
           onClick={() => sortOrders('sales')}
-          className="text-left hover:text-gray-800"
+          className="text-left hover:text-gray-800 cursor-pointer"
         >
           Sales {sortConfig.key === 'sales' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
@@ -108,11 +108,11 @@ const ReportList = ({ orders }) => {
               key={order._id} 
               className="grid grid-cols-[2fr_1fr_2fr_2fr_1.5fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50"
             >
-              <span className="break-words text-gray-800">{order.productId?.productName || 'N/A'}</span>
-              <span className="break-words text-gray-800">{order.orderQuantity}</span>
-              <span className="break-words text-gray-800">{order.email}</span>
-              <span className="break-words text-gray-800">{formatDate(order.dateOrdered)}</span>
-              <span className="break-words text-gray-800">P{sales.toFixed(2)}</span>
+              <span className="break-words text-gray-800 cursor-pointer">{order.productId?.productName || 'N/A'}</span>
+              <span className="break-words text-gray-800 cursor-pointer">{order.orderQuantity}</span>
+              <span className="break-words text-gray-800 cursor-pointer">{order.email}</span>
+              <span className="break-words text-gray-800 cursor-pointer">{formatDate(order.dateOrdered)}</span>
+              <span className="break-words text-gray-800 cursor-pointer">P{sales.toFixed(2)}</span>
             </div>
           );
         })}

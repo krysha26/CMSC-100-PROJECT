@@ -88,16 +88,13 @@ const handleDeleteAccount = async (accountId) => {
     <div className="account-management-page min-h-screen">
       <AdminHeader name="Account Management" />
       <div className="content-area p-6 flex gap-6">
-        <div className="w-2/3 relative rounded-lg border border-gray-200 overflow-hidden flex-shrink-0 h-[calc(100vh-180px)]">
-          <div className="account-list-card bg-white rounded-lg h-full">
-            <h2 className="mt-0 mb-5 text-xl font-medium text-[#333] px-6 pt-6">Account List</h2>
-            <div className="h-[calc(100%-80px)]">
-              {/* Pass the accounts and the delete handler as props to AccountList */}
-              <AccountList accounts={accounts} onDeleteAccount={handleDeleteAccount} />
-            </div>
-          </div>
+        {/* Account List Container */}
+        <div className="w-2/3 bg-white rounded-lg border border-gray-200 p-6 h-[calc(100vh-180px)]">
+          <AccountList accounts={accounts} onDeleteAccount={handleDeleteAccount} />
         </div>
-        <div className="w-1/3 relative rounded-lg overflow-hidden flex-shrink-0 h-[calc(100vh-180px)] shadow-md transform transition-all duration-300 ease-in-out hover:scale-101 hover:shadow-xl">
+
+        {/* Total Accounts Container */}
+        <div className="w-1/3 relative rounded-lg overflow-hidden flex-shrink-0 h-[calc(100vh-180px)] shadow-md transform transition-all duration-300 ease-in-out hover:scale-101 hover:shadow-xl cursor-pointer">
           <div
             className="absolute inset-0 bg-cover bg-center"
             style={{ backgroundImage: `url(${farmerImages[currentImageIndex]})` }}
@@ -109,8 +106,8 @@ const handleDeleteAccount = async (accountId) => {
           <div className="absolute inset-0 bg-green-800 opacity-45"></div>
           <div className="absolute inset-0 flex items-end justify-end p-6 z-10">
             <div className="text-right">
-              <p className="text-white text-sm mb-1">Total Users</p>
-              <p className="text-white text-7xl font-bold">{accounts.length}</p>
+              <p className="text-white text-sm mb-1 cursor-pointer">Total Users</p>
+              <p className="text-white text-7xl font-bold cursor-pointer">{accounts.length}</p>
             </div>
           </div>
         </div>

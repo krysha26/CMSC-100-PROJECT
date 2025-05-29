@@ -38,15 +38,6 @@
 
 /* General styles */
 
-p {
-    font-size: 13px;
-    color: #1D8B37;
-}
-
-h3 {
-    font-size: 30px;
-}
-
 .buttonRd {
   border-radius: 8px;
   padding: 3px 20px; /* vertical and horizontal padding */
