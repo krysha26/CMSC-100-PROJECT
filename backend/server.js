@@ -8,10 +8,6 @@ import userRoutes from "./routes/userRoutes.js";
 import productRoutes from "./routes/productRoutes.js";
 
 dotenv.config();
-const uri = process.env.MONGODB_URI;
-console.log(uri);
-
-
 
 mongoose.connect(process.env.MONGODB_URI)
   .then(() => console.log("MongoDB connected"))

@@ -6,14 +6,15 @@ import {
   updateProduct,
   deleteProduct
 } from "../controllers/productController.js";
+import authMiddleware from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/:id", getProduct);
-router.get("/", getAllProducts);
-router.post("/", addProduct);
-router.put("/:id", updateProduct);
-router.delete("/:id", deleteProduct);
+router.get("/:id", authMiddleware, getProduct);
+router.get("/", authMiddleware, getAllProducts);
+router.post("/", authMiddleware, addProduct);
+router.put("/:id", authMiddleware, updateProduct);
+router.delete("/:id", authMiddleware, deleteProduct);
 
 export default router;
 

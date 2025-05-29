@@ -6,15 +6,16 @@ import {
   deleteUser,
   signUp,
   signIn,
-  signOut
+  signOut,
 } from "../controllers/userController.js";
+import authMiddleware from "../../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.get("/:id", getUser);
-router.get("/", getAllUsers);
-router.put("/:id", updateUser);
-router.delete("/:id", deleteUser);
+router.get("/:id", authMiddleware, getUser);
+router.get("/", authMiddleware, getAllUsers);
+router.put("/:id", authMiddleware, updateUser);
+router.delete("/:id", authMiddleware, deleteUser);
 
 router.post("/signUp", signUp);
 router.post("/signIn", signIn);
