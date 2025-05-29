@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import AdminHeader from './AdminHeader';
+import AdminHeader from '../AdminHeader';
 import AccountList from './AccountList';
-import farmerImage from '../../assets/img/farmer.jpg';
-import farmerImage1 from '../../assets/img/farmer1.jpg'
-import farmerImage2 from '../../assets/img/farmer2.jpg'
-import farmerImage3 from '../../assets/img/farmer3.webp'
-import farmerImage4 from '../../assets/img/farmer4.jpeg'
-import farmerImage5 from '../../assets/img/farmer5.avif'
+import farmerImage from '../../../assets/img/farmer.jpg';
+import farmerImage1 from '../../../assets/img/farmer1.jpg'
+import farmerImage2 from '../../../assets/img/farmer2.jpg'
+import farmerImage3 from '../../../assets/img/farmer3.webp'
+import farmerImage4 from '../../../assets/img/farmer4.jpeg'
+import farmerImage5 from '../../../assets/img/farmer5.avif'
 
 const farmerImages = [
   farmerImage,
@@ -104,12 +104,7 @@ const AccountManagement = () => {
 
         <div className="w-2/3 relative rounded-lg border border-gray-200 overflow-hidden flex-shrink-0 h-[calc(100vh-180px)]">
           <div className="account-list-card bg-white rounded-lg h-full">
-            <h2 className="mt-0 mb-5 text-xl font-medium text-[#333] px-6 pt-6">
-              Account List
-            </h2>
-            <div className="h-[calc(100%-80px)]">
               <AccountList accounts={accounts} onDeleteAccount={handleDeleteAccount} />
-            </div>
           </div>
         </div>
 

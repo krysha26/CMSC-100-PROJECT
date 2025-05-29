@@ -1,5 +1,5 @@
 import React from 'react';
-import Icons from '../../components/common/Icons';
+import Icons from '../../../components/common/Icons';
 
 const AccountList = ({ accounts, onDeleteAccount }) => {
   if (!accounts || accounts.length === 0) {
@@ -7,13 +7,16 @@ const AccountList = ({ accounts, onDeleteAccount }) => {
   }
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
+      {/* Sticky header */}
       <div className="grid grid-cols-[2.5fr_2.5fr_1fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10">
         <span>Name</span>
         <span>Email</span>
         <span className="text-left">Action</span>
       </div>
-      <div className="overflow-y-auto max-h-[calc(100vh-250px)]">
+      
+      {/* Scrollable content */}
+      <div className="overflow-y-auto flex-1">
         {accounts.map((account) => (
           <div 
             key={account.id} 

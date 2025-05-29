@@ -9,11 +9,19 @@ function SignUp() {
 
   const handleSignIn = async (e) => {
     e.preventDefault();
-    await axios.post('http://localhost:5000/api/users/signUp', {
-      email: email,
-      password: password,
-    });
-    setMessage('Sign up successful!');
+    try {
+      await axios.post('https://anico-api.vercel.app/api/users/signUp', {
+        email: email,
+        password: password,
+      }, );
+      setMessage('Sign up successful!');
+    } catch (error) {
+      if (error.response?.status === 400) {
+        setMessage('This email is already registered. Please use a different email or sign in.');
+      } else {
+        setMessage('An error occurred during sign up. Please try again.');
+      }
+    }
   };
 
   return (

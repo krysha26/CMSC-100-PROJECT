@@ -13,7 +13,15 @@ console.log(uri);
 
 const app = express();
 
-app.use(cors());
+// Configure CORS
+const corsOptions = {
+  origin: '*', // Add your frontend URLs here
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+app.use(cors(corsOptions));
 
 app.use(express.json());
 

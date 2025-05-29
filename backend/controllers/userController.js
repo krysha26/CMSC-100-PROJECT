@@ -1,7 +1,7 @@
 import User from "../models/User.js";
 import argon2 from 'argon2';
 // import bcrypt from "bcryptjs";
-// import jwt from "jsonwebtoken";
+import jwt from "jsonwebtoken";
 
 // GET /api/users/:id
 const getUser = async (req, res) => {
@@ -52,11 +52,14 @@ const deleteUser = async (req, res) => {
 // POST /api/users/signUp
 const signUp = async (req, res) => {
   try {
+    console.log('Here')
     // const user = new User(req.body);
+
+    console.log(req.body);
     const { email, password } = req.body;
     const existing = await User.findOne({ email });
     let user; // so user can be used outside of the block scope
-
+    console.log(existing);
     if (existing) 
      return res.status(400).json({ message: "User already exists" });
     else{ 
