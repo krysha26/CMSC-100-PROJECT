@@ -10,80 +10,51 @@ import {
 } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import Stepper from './Stepper';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-hot-toast';
 import "../App.css";
-import axios from 'axios';
 
 const ActionModal = ({ open, onClose, onAction2, props, stock, setStock, quantity, setProdQuantity, cart, setCart }) => {
     const[pickedQuant,setPickedQuant] = useState(1);
     const[locQuant,setQuant] = useState(quantity);
 
-//     const addToCart = async () => { // Handle add to cart func Move to add to order once checkout
-//     try {
-//         const product = await axios.post('http://localhost:5000/api/orders/', {
-//         productId: props[5], 
-//         orderQuantity: quantity,
-//         orderStatus: 0,
-//         email: 'franzemail@gmail.com', // Edit email
-//         dateOrdered: new Date(),  
-//         time: new Date().toLocaleTimeString() 
-//         });
-//         toast.success("Successfully added to cart",{
-//             autoClose: 2000,
-//             onClose: onAction2,
-//         } );
-//         setStock(prev => (prev > 0 ? prev - quantity : 0)); // Update stock
-//     } catch (error) {
-//         console.log("Error adding to cart:", error);
-//     }
-//   };
- 
-
 const handleAddToCart = () => {
   setCart((prevCart) => {
-    // Find if item already exists in cart
     const existingIndex = prevCart.findIndex(item => item[5] === props[5]);
 
     if (existingIndex !== -1) {
-      // Item exists: create new cart array with updated quantity
       const updatedCart = [...prevCart];
-      // updatedCart[existingIndex] is the existing item array
-
-      // If no quantity yet, initialize it to 0
       const currentQuantity = updatedCart[existingIndex][7] || 0;
       updatedCart[existingIndex] = [
         ...updatedCart[existingIndex].slice(0, 7),
-        currentQuantity + pickedQuant // new quantity
+        currentQuantity + pickedQuant
       ];
 
-      toast.success("Successfully added to cart",{
-            autoClose: 2000,
-            onClose: onAction2,
-        } );
       
-      console.log("🛒 Updated existing item quantity:", updatedCart[existingIndex][6]);
-      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0)); // Update local stock
-      setProdQuantity (prev => (prev > 0 ? prev - pickedQuant : 0)); 
-      setStock(prev => (prev > 0 ? prev - quantity : 0)); // Update global stock
+      onAction2?.();
+      onClose();
+
+      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
+      setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
+      setStock(prev => (prev > 0 ? prev - quantity : 0));
+      toast.success("Added to cart!");
 
       return updatedCart;
 
     } else {
-      // Item doesn't exist: add new item with quantity as the 7th element
-      const newItem = [...props, pickedQuant];  // props + quantity
-      console.log("✅ Added new item to cart:", newItem);
-      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0)); // Update local stock
-      setProdQuantity (prev => (prev > 0 ? prev - pickedQuant : 0)); 
-      setStock(prev => (prev > 0 ? prev - quantity : 0)); // Update global stock
+      const newItem = [...props, pickedQuant];
+
+      
+      onAction2?.();
+      onClose();
+
+      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
+      setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
+      setStock(prev => (prev > 0 ? prev - quantity : 0));
+      toast.success("Added to cart!");
       return [...prevCart, newItem];
     }
-    
-
   });
-
-
 };
-
 
 
   return (
@@ -245,29 +216,6 @@ const handleAddToCart = () => {
           </Box>
         </Box>
 
-        <ToastContainer
-          position="top-right"
-          autoClose={3000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-          toastClassName="custom-toast"
-          bodyClassName="custom-toast-body"
-        
-          closeButton={({ closeToast }) => (
-            <button
-              onClick={closeToast}
-              className="custom-toast-close"
-            >
-              ×
-            </button>
-          )}
-        />
       </Box>
     </Modal>
   );

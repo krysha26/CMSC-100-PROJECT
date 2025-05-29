@@ -30,7 +30,7 @@
   flex: 0 0 22%;
   margin-top: 7%;
   margin-right: 70px;
-  height: calc(100vh - 100px); /* Adjust based on your header/nav height */
+  height: calc(100vh - 100px); 
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;

@@ -6,23 +6,24 @@ import {
   Typography,
   IconButton,
   Box,
-  Stack
+  Stack,
 } from '@mui/material';
 import Stepper from './Stepper';
 import DeleteIcon from '@mui/icons-material/Delete';
+import toast from 'react-hot-toast';
 
 const CardBox = ({ title, description, imageUrl, price, productId, count, cart, setCart }) => {
-
   const handleDelete = () => {
     setCart((prevCart) => prevCart.filter(item => item[5] !== productId));
+    toast.success('Item removed from cart 🗑️');
   };
 
   const handleQuantityChange = (newQuantity) => {
-    setCart((prevCart) => 
+    setCart((prevCart) =>
       prevCart.map(item => {
         if (item[5] === productId) {
           const newItem = [...item];
-          newItem[6] = newQuantity; // Avoid mutating the original item
+          newItem[6] = newQuantity;
           return newItem;
         }
         return item;

@@ -31,7 +31,7 @@
             Orders 
           </NavLink> 
             
-          </li> {/*Add nav link */}
+          </li> 
         </ul>
 
       </div>
