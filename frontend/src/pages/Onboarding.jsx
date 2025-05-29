@@ -1,143 +1,406 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
-import AnicoLogoWhite from '../assets/img/ANICO_icon-admin.png'; // Assuming this path is correct
+import React, { useState, useEffect } from 'react';
+import { ShoppingCart, Users, Shield, TrendingUp, Leaf, Heart, ArrowRight, CheckCircle, Star } from 'lucide-react';
+import AnicoMainIcon from '../assets/img/anico-main-icon.png';
 
-const Onboarding = () => {
+const TypingText = ({ phrases, className }) => {
+  const [displayText, setDisplayText] = useState('');
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [phraseIndex, setPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const currentPhrase = phrases[phraseIndex];
+    
+    if (!isDeleting && currentIndex < currentPhrase.length) {
+      // Typing
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev + currentPhrase[currentIndex]);
+        setCurrentIndex(prev => prev + 1);
+      }, 250);
+
+      return () => clearTimeout(timeout);
+    } else if (!isDeleting && currentIndex === currentPhrase.length) {
+      // Pause at the end of typing
+      const timeout = setTimeout(() => {
+        setIsDeleting(true);
+      }, 1500); // Pause for 1.5 seconds before starting to delete
+
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && currentIndex > 0) {
+      // Deleting
+      const timeout = setTimeout(() => {
+        setDisplayText(prev => prev.slice(0, -1));
+        setCurrentIndex(prev => prev - 1);
+      }, 150); // Faster deletion speed
+
+      return () => clearTimeout(timeout);
+    } else if (isDeleting && currentIndex === 0) {
+      // Move to next phrase
+      setIsDeleting(false);
+      setPhraseIndex(prev => (prev + 1) % phrases.length);
+    }
+  }, [currentIndex, isDeleting, phraseIndex, phrases]);
+
   return (
-    <div className="onboarding-page min-h-screen bg-gray-100 font-sans antialiased">
-      {/* Header */}
-      <header className="fixed w-full top-0 z-50 flex justify-between items-center px-6 py-4 bg-green-800 text-white shadow-lg">
-        <div className="flex items-center">
-          {/* Using the white logo for the dark header */}
-          <img src={AnicoLogoWhite} alt="Anico Logo" className="h-9 mr-3" />
-          {/* <span className="text-2xl font-bold tracking-wider">Anico</span> */}
+    <span className={className}>
+      {displayText}
+      <span className="animate-pulse">|</span>
+    </span>
+  );
+};
+
+const AnicoOnboarding = () => {
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 50);
+    };
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  return (
+    <div className="font-sans text-gray-900 overflow-x-hidden">
+      {/* Navigation */}
+      <nav className={`fixed top-0 w-full z-50 transition-all duration-300 ${
+        isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg' : 'bg-transparent'
+      }`}>
+        <div className="max-w-7xl mx-auto px-6 py-4">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center space-x-3">
+              <div className="w-7 h-7 p-1 rounded-sm flex items-center justify-center bg-white-200 shadow-lg overflow-hidden">
+                <img src={AnicoMainIcon} alt="ANICO" className="w-full h-full object-contain" />
+              </div>
+              <span className={`text-2xl font-bold transition-colors ${
+                isScrolled ? 'text-gray-900' : 'text-white'
+              }`}>ANICO</span>
+            </div>
+            <button className={`px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
+              isScrolled 
+                ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg'
+                : 'border-2 border-white text-white hover:bg-white hover:text-green-800'
+            }`}>
+              Sign Up
+            </button>
+          </div>
         </div>
-        <nav>
-          <Link to="/signUp" className="px-5 py-2 border-2 border-white rounded-full text-white font-semibold hover:bg-white hover:text-green-800 transition-all duration-300 ease-in-out shadow-md">
-            Sign Up
-          </Link>
-        </nav>
-      </header>
+      </nav>
 
-      {/* Main Content */}
-      <main className="pt-20">
-        {/* Hero Section */}
-        <section className="relative bg-cover bg-center h-[80vh] flex items-center justify-center text-center text-white overflow-hidden" style={{ backgroundImage: 'url(https://images.unsplash.com/photo-1568212607431-0c143c291872?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80)' }}>
-          <div className="absolute inset-0 bg-black opacity-60"></div> {/* Darker overlay for better text contrast */}
-          <div className="relative z-10 px-6 max-w-4xl mx-auto">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold leading-tight mb-6 drop-shadow-lg">Grow Sustainably, Thrive Digitally with Anico</h1>
-            <p className="text-xl md:text-2xl mb-10 opacity-95">Empowering farmers with modern tools and knowledge for a greener, more productive future. Join a community dedicated to sustainable agriculture.</p>
-            <Link to="/signUp" className="bg-green-600 text-white px-10 py-4 rounded-full text-lg font-bold hover:bg-green-700 transition-colors duration-300 ease-in-out shadow-lg transform hover:scale-105">
-              Get Started Today
-            </Link>
+      {/* Hero Section */}
+      <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-green-800 via-green-700 to-green-900"></div>
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_40%,rgba(255,255,255,0.1)_0%,transparent_50%)]"></div>
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1500382017468-9049fed747ef?ixlib=rb-4.0.3&auto=format&fit=crop&w=2340&q=80')] bg-cover bg-center opacity-20"></div>
+        
+        {/* Floating Elements */}
+        <div className="absolute top-20 left-10 w-20 h-20 bg-yellow-400/20 rounded-full blur-xl animate-pulse"></div>
+        <div className="absolute bottom-32 right-16 w-32 h-32 bg-green-400/20 rounded-full blur-2xl animate-pulse delay-1000"></div>
+        
+        <div className="relative z-10 text-center px-6 max-w-7xl mx-auto">
+          
+          <h1 className="text-5xl md:text-7xl lg:text-8xl font-black leading-tight mt-60 text-white flex items-center justify-center gap-4">
+            <span>Ani ko.</span>
+            <TypingText 
+              phrases={["Buhay mo.", "Kinabukasan mo.", "Para sa'yo."]}
+              className="bg-gradient-to-r from-yellow-400 to-orange-400 bg-clip-text text-transparent"
+            />
+          </h1>
+          
+          <p className="text-lg md:text-lg text-green-100 mb-40 max-w-5xl mx-auto leading-relaxed">
+            "Isang hakbang tungo sa mas masustansya, mas makatarungan, at mas makabagong agrikultura."
+          </p>
+          
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <button className="group bg-white text-green-800 px-10 py-4 rounded-full text-lg font-bold hover:bg-yellow-50 transition-all duration-300 shadow-2xl hover:shadow-3xl transform hover:scale-105">
+              Simulan Ngayon
+              <ArrowRight className="inline-block ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button className="border-2 border-white/70 text-white px-10 py-4 rounded-full text-lg font-semibold hover:bg-white/10 backdrop-blur-sm transition-all duration-300">
+              Alamin Pa
+            </button>
           </div>
-        </section>
-
-        {/* About Section */}
-        <section className="py-20 px-6 bg-white">
-          <div className="container mx-auto flex flex-col md:flex-row items-center gap-12">
-            <div className="md:w-1/2">
-               {/* Placeholder Image - Replace with a relevant image */}
-              <img src="https://images.unsplash.com/photo-1563430398526-8f5211b6b277?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80" alt="About Us" className="rounded-lg shadow-xl" />
+          
+          {/* Trust Indicators */}
+          <div className="flex flex-wrap justify-center items-center gap-8 text-green-100/80">
+            <div className="flex items-center gap-2">
+              <Shield className="w-5 h-5" />
+              <span className="text-sm">DA Verified</span>
             </div>
-            <div className="md:w-1/2 text-center md:text-left">
-              <h2 className="text-4xl font-bold text-gray-800 mb-6">Our Mission</h2>
-              <p className="text-lg text-gray-600 leading-relaxed">
-                Anico is passionately committed to revolutionizing sustainable agriculture through accessible technology. We aim to provide farmers with the innovative tools, data-driven insights, and essential resources needed to significantly boost efficiency, minimize environmental impact, and achieve superior yields. Our ultimate goal is to foster a healthier planet and cultivate thriving, prosperous farming communities worldwide.
-              </p>
+            <div className="flex items-center gap-2">
+              <Users className="w-5 h-5" />
+              <span className="text-sm">10,000+ Miyembro</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <Star className="w-5 h-5 fill-current" />
+              <span className="text-sm">5/5 Rating</span>
             </div>
           </div>
-        </section>
+        </div>
+      </section>
 
-         {/* How it Works Section */}
-        <section className="py-20 px-6 bg-gray-50">
-            <div className="container mx-auto text-center">
-                <h2 className="text-4xl font-bold text-gray-800 mb-12">How Anico Works</h2>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-                    {/* Step 1 */}
-                    <div className="flex flex-col items-center p-8 bg-white rounded-lg shadow-md">
-                        <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                            <span className="text-green-700 text-2xl font-bold">1</span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-3">Sign Up & Set Up</h3>
-                        <p className="text-gray-600">Create your account and easily set up your farm profile on our platform.</p>
-                    </div>
-                    {/* Step 2 */}
-                    <div className="flex flex-col items-center p-8 bg-white rounded-lg shadow-md">
-                         <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                            <span className="text-green-700 text-2xl font-bold">2</span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-3">Access Tools & Insights</h3>
-                        <p className="text-gray-600">Utilize our smart farming tools and gain valuable data-driven insights to optimize your practices.</p>
-                    </div>
-                    {/* Step 3 */}
-                    <div className="flex flex-col items-center p-8 bg-white rounded-lg shadow-md">
-                         <div className="flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-6">
-                            <span className="text-green-700 text-2xl font-bold">3</span>
-                        </div>
-                        <h3 className="text-xl font-semibold text-gray-800 mb-3">Grow & Connect</h3>
-                        <p className="text-gray-600">Implement sustainable methods, increase yields, and connect with markets and other farmers.</p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        {/* Features Section - Refined */}
-        <section className="py-20 px-6 bg-white">
-          <div className="container mx-auto">
-            <h2 className="text-4xl font-bold text-center text-gray-800 mb-12">Why Choose Anico?</h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
-              {/* Feature 1 */}
-              <div className="flex flex-col items-center p-8 bg-gray-50 rounded-lg shadow-md text-center">
-                <div className="text-green-600 mb-4">
-                  {/* Icon Placeholder - Suggestion: Use a relevant Lucide icon like 'Zap' or 'Lightbulb' */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12" y2="8"></line></svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Smart Farming</h3>
-                <p className="text-gray-600">Utilize data-driven insights to optimize your farming practices for maximum efficiency and minimal waste.</p>
-              </div>
-              {/* Feature 2 */}
-              <div className="flex flex-col items-center p-8 bg-gray-50 rounded-lg shadow-md text-center">
-                <div className="text-green-600 mb-4">
-                   {/* Icon Placeholder - Suggestion: Use a relevant Lucide icon like 'Leaf' or 'Recycle' */}
-                  <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Sustainable Practices</h3>
-                <p className="text-gray-600">Access resources and tools to implement environmentally friendly farming methods that protect your land and the planet.</p>
-              </div>
-              {/* Feature 3 */}
-              <div className="flex flex-col items-center p-8 bg-gray-50 rounded-lg shadow-md text-center">
-                 <div className="text-green-600 mb-4">
-                   {/* Icon Placeholder - Suggestion: Use a relevant Lucide icon like 'ShoppingBag' or 'DollarSign' */}
-                   <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="7" width="20" height="15" rx="2" ry="2"></rect><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path></svg>
-                </div>
-                <h3 className="text-xl font-semibold text-gray-800 mb-3">Market Access</h3>
-                <p className="text-gray-600">Connect with buyers and access markets efficiently, ensuring fair prices for your sustainably grown produce.</p>
+      {/* Mission Section */}
+      <section className="py-24 bg-gradient-to-b from-gray-50 to-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-2 gap-16 items-center">
+            <div className="space-y-8">
+              <div>
+                <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+                 Ang Aming Misyon
+                </span>
+                <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6 leading-tight">
+                  Pagkakaisa ng Agrikultura at Teknolohiya
+                </h2>
+                <p className="text-xl text-gray-600 leading-relaxed">
+                  Isulong ang direktang koneksyon ng mga Pilipinong magsasaka at mamimili sa pamamagitan ng teknolohiya—upang mapababa ang presyo, madagdagan ang kita ng mga magsasaka, at mapalapit muli ang loob ng bawat Pilipino sa sariling ani.
+                </p>
               </div>
             </div>
+            <div className="relative">
+              <div className="absolute -inset-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl opacity-20 blur-xl"></div>
+              <div className="flex flex-row gap-4 relative rounded-3xl">
+                <img 
+                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  alt="Filipino farmers" 
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  alt="Filipino farmers" 
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  alt="Filipino farmers" 
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                />
+                <img 
+                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  alt="Filipino farmers" 
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                />
+              </div>
+            </div>
+            
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* Call to Action Section */}
-        <section className="py-20 px-6 bg-green-700 text-white text-center">
-          <div className="container mx-auto max-w-2xl">
-             <h2 className="text-4xl font-bold mb-6">Ready to Transform Your Farm?</h2>
-             <p className="text-xl mb-10 opacity-95">Join Anico today and unlock the potential of sustainable, data-driven agriculture for a more prosperous future.</p>
-             <Link to="/signUp" className="bg-white text-green-700 px-10 py-4 rounded-full text-lg font-bold hover:bg-gray-200 transition-colors duration-300 ease-in-out shadow-lg transform hover:scale-105">
-               Sign Up Now
-             </Link>
+      {/* How It Works */}
+      <section className="py-24 bg-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <span className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-sm font-semibold mb-4">
+              🔍 Paano Gumagana
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Simpleng Proseso, Malaking Epekto
+            </h2>
+            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+              Sa tatlong hakbang lang, makakaugnayan mo na ang mga magsasaka at makakakuha ng pinakamasustansyang ani.
+            </p>
           </div>
-        </section>
-      </main>
+
+          <div className="grid md:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <ShoppingCart className="w-8 h-8" />,
+                title: "Mag-Browse at Mamili",
+                description: "Tuklasin ang sariwang ani mula sa mga rehistradong magsasaka. Piliin, idagdag sa cart, at ihanda para sa pag-checkout."
+              },
+              {
+                icon: <Heart className="w-8 h-8" />,
+                title: "Direktang Transaksyon",
+                description: "Walang middleman. Ang bayad mo ay direkta sa produktong ani ng magsasaka. COD? Walang problema."
+              },
+              {
+                icon: <Shield className="w-8 h-8" />,
+                title: "DA Assurance",
+                description: "Sa tulong ng Department of Agriculture, may tiyak na pamamahala sa bawat produkto, order, at benta."
+              }
+            ].map((step, index) => (
+              <div key={index} className="group relative">
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-8 rounded-3xl border border-gray-200 hover:border-green-300 transition-all duration-300 hover:shadow-xl">
+                  <div className="flex items-center justify-center w-16 h-16 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl mb-6 text-white group-hover:scale-110 transition-transform duration-300">
+                    {step.icon}
+                  </div>
+                  <div className="absolute top-4 right-4 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 font-bold text-sm">{index + 1}</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-gray-900 mb-4">{step.title}</h3>
+                  <p className="text-gray-600 leading-relaxed">{step.description}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Grid */}
+      <section className="py-24 bg-gradient-to-b from-green-50 to-white">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="text-center mb-20">
+            <span className="inline-block px-4 py-2 bg-green-100 text-green-700 rounded-full text-sm font-semibold mb-4">
+              ❤️ Bakit Anico?
+            </span>
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
+              Makabagong Paraan, Makalumang Diwa
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {[
+              {
+                icon: <TrendingUp className="w-6 h-6" />,
+                title: "Direkta sa Pinagmulan",
+                description: "Walang patong, walang daya—mas murang presyo para sa'yo, mas mataas na kita para sa kanila.",
+                color: "from-blue-500 to-blue-600"
+              },
+              {
+                icon: <Heart className="w-6 h-6" />,
+                title: "Lokal ang Lakas",
+                description: "Suportahan ang sariling atin. Mula sa palayan, bukirin, at kabukiran, diretso sa tahanan mo.",
+                color: "from-red-500 to-red-600"
+              },
+              {
+                icon: <Shield className="w-6 h-6" />,
+                title: "Sistemang May Puso",
+                description: "Pinag-isipang mabuti para sa kapakanan ng magsasaka at mamimili. May seguridad, transparency, at malasakit.",
+                color: "from-green-500 to-green-600"
+              },
+              {
+                icon: <CheckCircle className="w-6 h-6" />,
+                title: "Pinamamahalaan ng DA",
+                description: "Mapagkakatiwalaang pamahalaan para sa maayos at sistematikong pamamalakad.",
+                color: "from-purple-500 to-purple-600"
+              },
+              {
+                icon: <Leaf className="w-6 h-6" />,
+                title: "Sustainable Agriculture",
+                description: "Gamit ang modernong teknolohiya para maipagpatuloy ang sinaunang ugnayan ng tao at lupa.",
+                color: "from-emerald-500 to-emerald-600"
+              },
+              {
+                icon: <Users className="w-6 h-6" />,
+                title: "Community Driven",
+                description: "Hindi lang ito app. Isa itong kilusan para sa mas maayos na kinabukasan ng agrikultura.",
+                color: "from-orange-500 to-orange-600"
+              }
+            ].map((feature, index) => (
+              <div key={index} className="group relative bg-white p-8 rounded-3xl border border-gray-200 hover:border-gray-300 hover:shadow-xl transition-all duration-300">
+                <div className={`inline-flex items-center justify-center w-12 h-12 bg-gradient-to-r ${feature.color} rounded-xl text-white mb-6 group-hover:scale-110 transition-transform duration-300`}>
+                  {feature.icon}
+                </div>
+                <h3 className="text-xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                <p className="text-gray-600 leading-relaxed">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Vision Statement */}
+      <section className="py-24 bg-gradient-to-r from-green-800 via-green-700 to-green-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80')] bg-cover bg-center opacity-10"></div>
+        <div className="relative max-w-5xl mx-auto px-6 text-center">
+          <span className="inline-block px-6 py-3 bg-yellow-400/20 backdrop-blur-sm border border-yellow-400/30 rounded-full text-yellow-100 text-sm font-semibold mb-8">
+            🌱 Ang Aming Bisyon
+          </span>
+          <h2 className="text-4xl md:text-6xl font-bold text-white mb-8 leading-tight">
+            Isang Mas Masustansyang Pilipinas
+          </h2>
+          <p className="text-xl md:text-2xl text-green-100 mb-12 leading-relaxed">
+            Isang makabagong Pilipinas kung saan bawat mesa ay may masustansyang pagkaing galing direkta sa ating mga magsasaka—makatarungan, makabayan, at makakalikasan.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <button className="bg-gradient-to-r from-yellow-400 to-orange-400 text-gray-900 px-10 py-4 rounded-full text-lg font-bold hover:from-yellow-300 hover:to-orange-300 transition-all duration-300 shadow-2xl transform hover:scale-105">
+              Makisali sa Kilusan
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-24 bg-white">
+        <div className="max-w-4xl mx-auto px-6 text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">
+            Makisali. Magsimula. Magkaisa.
+          </h2>
+          <p className="text-xl text-gray-600 mb-12 leading-relaxed">
+            Sa bawat pindot, binibigyan mo ng pag-asa ang isang magsasaka. 
+            Sa bawat order, binibigyan mo ng direksyon ang kinabukasan ng agrikultura.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <button className="bg-gradient-to-r from-green-600 to-green-700 text-white px-12 py-4 rounded-full text-lg font-bold hover:from-green-700 hover:to-green-800 transition-all duration-300 shadow-xl transform hover:scale-105">
+              Magsimula Bilang Mamimili
+            </button>
+            <button className="border-2 border-green-600 text-green-600 px-12 py-4 rounded-full text-lg font-semibold hover:bg-green-50 transition-all duration-300">
+              Maging DA Admin
+            </button>
+          </div>
+          
+          {/* Security Notice */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl p-8">
+            <div className="flex items-center justify-center mb-4">
+              <Shield className="w-8 h-8 text-blue-600 mr-3" />
+              <h3 className="text-xl font-bold text-gray-900">Seguridad Mo, Prioridad Namin</h3>
+            </div>
+            <p className="text-gray-600 leading-relaxed">
+              Protektado ang account mo gamit ang email-based login. Limitado ang access base sa role mo bilang customer o admin. 
+              Transparent ang bawat transaksyon. Lahat ay dokumentado at maayos na mino-monitor.
+            </p>
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="text-center py-8 text-gray-600 text-sm bg-white border-t border-gray-200">
-        <div className="container mx-auto">
-           © {new Date().getFullYear()} Anico. All rights reserved.
+      <footer className="bg-gray-900 text-white py-16">
+        <div className="max-w-7xl mx-auto px-6">
+          <div className="grid md:grid-cols-4 gap-8 mb-12">
+            <div className="md:col-span-2">
+              <div className="flex items-center space-x-3 mb-6">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center overflow-hidden">
+                  <img src={AnicoMainIcon} alt="ANICO" className="w-full h-full object-contain" />
+                </div>
+                <span className="text-3xl font-bold">ANICO</span>
+              </div>
+              <p className="text-gray-400 text-lg leading-relaxed mb-6">
+                Ang Kinabukasan ay Inaani Ngayon. Panahon na para ibalik ang halaga sa tunay na nagbubungkal ng lupa.
+              </p>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Para sa Magsasaka</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>Magpalista ng Produkto</li>
+                <li>Order Management</li>
+                <li>Sales Reports</li>
+              </ul>
+            </div>
+            <div>
+              <h4 className="text-lg font-semibold mb-4">Para sa Mamimili</h4>
+              <ul className="space-y-2 text-gray-400">
+                <li>Browse Products</li>
+                <li>COD Payment</li>
+                <li>Order Tracking</li>
+              </ul>
+            </div>
+          </div>
+          <div className="border-t border-gray-800 pt-8">
+            <div className="flex flex-col md:flex-row justify-between items-center">
+              <p className="text-gray-400 text-sm">
+                © {new Date().getFullYear()} ANICO. Lahat ng karapatan ay nakalaan.
+              </p>
+              <div className="flex space-x-6 mt-4 md:mt-0">
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Privacy Policy</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Terms of Service</a>
+                <a href="#" className="text-gray-400 hover:text-white transition-colors">Contact</a>
+              </div>
+            </div>
+          </div>
         </div>
       </footer>
     </div>
   );
 };
 
-export default Onboarding;
+export default AnicoOnboarding;
