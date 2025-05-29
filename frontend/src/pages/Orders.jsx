@@ -12,9 +12,10 @@ import { IoMdArrowDropdown } from "react-icons/io";
 import { useState, useEffect } from 'react';
 import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
 import './Orders.css';
-import CardBox from '../components/CardBox';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import CheckCircleIcon from '@mui/icons-material/CheckCircle';
+import CancelIcon from '@mui/icons-material/Cancel';
 import OrdCardBox from '../components/OrderCard';
 import axios from 'axios';
 
@@ -154,40 +155,22 @@ useEffect(() => {
                 }}
               >
                 <Typography fontFamily='Poppins' color='#1A1A1A' sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <ShoppingCartIcon sx={{ color: '#1D8B37', mr: 1 }} />ORDER SUMMARY
+                  <CheckCircleIcon sx={{ color: '#1D8B37', mr: 1 }} /> CONFIRMED ORDERS
                 </Typography>
                 <Stack sx={{
                   display: 'flex',
-                  flexDirection: 'column',
-                  width: '100%',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent:'space-between',
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  width: '80%',
                   fontSize: 12
                 }}>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
-                    <Typography fontFamily='PoppinsR' color='#1A1A1A' width='100%' sx={{ fontSize: '14px' }}>
-                      Sub-Total
-                    </Typography>
-                    <Typography fontFamily='PoppinsR' color='#1A1A1A' sx={{ fontSize: '14px' }}>
-                      P{subTot.toFixed(2)}
-                    </Typography>
-                  </Box>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
-                    <Typography fontFamily='PoppinsR' color='#1A1A1A' width='100%' sx={{ fontSize: '14px' }}>
-                      Shipping
-                    </Typography>
-                    <Typography fontFamily='PoppinsR' color='#1A1A1A' sx={{ fontSize: '14px' }}>
-                      P{shippingFee}
-                    </Typography>
-                  </Box>
+                  <CheckBoxIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px' }} /> Cash On Delivery
                 </Stack>
-                <hr style={{ color: '#1a1a1a', width: '100%' }} />
-                <Box sx={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-evenly', width: '100%' }}>
-                  <Typography fontFamily='Poppins' color='#1A1A1A' width='100%' sx={{ fontSize: '14px' }}>
-                    Total
-                  </Typography>
-                  <Typography fontFamily='PoppinsR' color='#1A1A1A' sx={{ fontSize: '14px' }}>
-                    P{(subTot + shippingFee).toFixed(2)}
-                  </Typography>
-                </Box>
+              
+               
               </Stack>
             </Card>
 
@@ -202,11 +185,20 @@ useEffect(() => {
                 }}
               >
                  <Typography fontFamily='Poppins' color='#1A1A1A' sx={{ display: 'flex', flexDirection: 'row' }}>
-                  <PaymentsIcon sx={{ color: '#1D8B37', mr: 1 }} /> PAYMENT METHOD
+                  <CancelIcon sx={{ color: '#F34F30', mr: 1 }} /> CANCELLED ORDERS
                 </Typography>
-                  <Typography fontFamily='PoppinsR' color='#1A1A1A' width='100%' sx={{ fontSize: '14px', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center' }}>
-                    <CheckBoxIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px' }} /> Cash On Delivery
-                  </Typography>
+                  <Stack sx={{
+                  display: 'flex',
+                  flexDirection: 'row',
+                  alignItems: 'center',
+                  justifyContent:'space-between',
+                  paddingLeft: 20,
+                  paddingRight: 20,
+                  width: '80%',
+                  fontSize: 12
+                }}>
+                  <CancelIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px' }} /> Cash On Delivery
+                </Stack>
               </Stack>    
          </Card>
 
