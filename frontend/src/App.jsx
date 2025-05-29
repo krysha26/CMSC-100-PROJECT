@@ -8,11 +8,16 @@ import AccountManagement from "./pages/Adminpage_files/account-management/Accoun
 import Products from "./pages/Adminpage_files/products/Products";
 import AdminOrder from "./pages/Adminpage_files/orders/AdminOrder";
 import AdminReport from "./pages/Adminpage_files/reports/AdminReport";
+import Onboarding from './pages/Onboarding';
 
 function App() {
   const routes = [ // Add child parameter
     {
       path: "/",
+      element: <Onboarding />,
+    },
+    {
+      path:"/signIn",
       element: <SignIn />,
     },
     {
