@@ -160,24 +160,24 @@ const AnicoOnboarding = () => {
               <div className="absolute -inset-4 bg-gradient-to-r from-green-400 to-blue-500 rounded-3xl opacity-20 blur-xl"></div>
               <div className="flex flex-row gap-4 relative rounded-3xl">
                 <img 
-                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  src="https://plus.unsplash.com/premium_photo-1664527305901-a3c8bec62850?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8dmVnZXRhYmxlfGVufDB8fDB8fHww" 
                   alt="Filipino farmers" 
-                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover transform hover:scale-102 transition-transform duration-300"
                 />
                 <img 
-                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  src="https://images.unsplash.com/photo-1587593810167-a84920ea0781?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8M3x8Y2hpY2tlbiUyMHJhd3xlbnwwfHwwfHx8MA%3D%3D" 
                   alt="Filipino farmers" 
-                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover transform hover:scale-103 transition-transform duration-300"
                 />
                 <img 
-                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Nnx8ZnJ1aXRzfGVufDB8fDB8fHww" 
                   alt="Filipino farmers" 
-                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover transform hover:scale-103 transition-transform duration-300"
                 />
                 <img 
-                  src="https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" 
+                  src="https://images.unsplash.com/photo-1498654077810-12c21d4d6dc3?w=900&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZWdnc3xlbnwwfHwwfHx8MA%3D%3D" 
                   alt="Filipino farmers" 
-                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover"
+                  className="relative rounded-3xl shadow-2xl w-1/3 h-96 object-cover transform hover:scale-103 transition-transform duration-300"
                 />
               </div>
             </div>
