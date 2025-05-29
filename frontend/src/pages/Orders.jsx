@@ -15,6 +15,7 @@ import './Orders.css';
 import CardBox from '../components/CardBox';
 import PaymentsIcon from '@mui/icons-material/Payments';
 import CheckBoxIcon from '@mui/icons-material/CheckBox';
+import OrdCardBox from '../components/OrderCard';
 import axios from 'axios';
 
 const Orders = ({ cart, setCart }) => {
@@ -113,7 +114,7 @@ useEffect(() => {
                 if (!product) return null;
 
                 return (
-                <CardBox
+                <OrdCardBox
                     key={order._id} // This is your order's unique ID
                     title={product.productName}
                     description={product.productDescription}
@@ -123,6 +124,9 @@ useEffect(() => {
                     cart={cart}
                     setCart={setItems}
                     productId={product._id} // send to cart if needed
+                    status={order.orderStatus} // send status
+                    orderId={order._id} // pass order id for delete
+                    setProducts={setOrders} // to change produts
                 />
                 );
             })}
