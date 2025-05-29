@@ -64,7 +64,7 @@ const ItemCard = ({ price, name, stock, category, desc, productId, quantity, set
         onClose={() => setOpen(false)}
         onAction2={handleAdd}
         props={[price,name, stock ,category, desc,productId,quantity]}
-        stock={stock} // For total stock
+        stock={stock} // For total stock orig count
         setStock ={setStock} // To update stock here
         quantity ={quantity} // To update quantity 
         setProdQuantity = {setProdQuantity} // To update product
