@@ -2,6 +2,8 @@ import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import multer from "multer"; // Import multer for file uploads
+import path from "path";
 
 import orderRoutes from "./routes/orderRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
@@ -19,10 +21,23 @@ mongoose.connect(process.env.MONGODB_URI)
 
 const app = express();
 
+// Set up multer for file uploads
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/'); // Directory to store uploaded images
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname)); // Unique filename
+  },
+});
+
+const upload = multer({ storage });
+
+// Serve static files from the 'uploads' directory
+app.use('/uploads', express.static('uploads'));
+
 // Middleware
 app.use(cors({ origin: '*', credentials: true }));
-
-
 
 // Configure CORS
 const corsOptions = {
@@ -41,12 +56,24 @@ app.get("/", (req, res) => {
   res.send("Hello, world!");
 });
 
-
-
 // API routes
 app.use("/api/orders", orderRoutes);
-app.use("/api/users", userRoutes);  // Placed after specific DELETE route
+app.use("/api/users", userRoutes); // Placed after specific DELETE route
 app.use("/api/products", productRoutes);
+
+// POST endpoint for uploading a product image
+app.post('/api/products/upload', upload.single('photo'), (req, res) => {
+  if (req.file) {
+    res.json({
+      message: 'File uploaded successfully',
+      fileUrl: `/uploads/${req.file.filename}`, // Send the file URL back
+    });
+  } else {
+    res.status(400).json({ message: 'No file uploaded' });
+  }
+});
+
+
 
 // Start the server
 const PORT = process.env.PORT || 5000;

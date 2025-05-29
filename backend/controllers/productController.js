@@ -1,4 +1,6 @@
 import Product from '../models/Product.js';
+import path from 'path';
+import fs from 'fs';
 
 // GET /api/products/:id
 const getProduct = async (req, res) => {
@@ -23,11 +25,23 @@ const getAllProducts = async (req, res) => {
 // POST /api/products
 const addProduct = async (req, res) => {
   try {
-    const product = new Product(req.body);
-    await product.save();
-    res.status(201).json(product);
+    const { productName, productDescription, productType, productPrice, productQuantity } = req.body;
+    const photo = req.file ? req.file.path : null;
+
+    const newProduct = new Product({
+      productName,
+      productDescription,
+      productType,
+      productPrice,
+      productQuantity,
+      photo
+    });
+
+    await newProduct.save();
+    res.status(201).json(newProduct);
   } catch (err) {
-    res.status(400).json({ error: err.message });
+    console.error("Error adding product:", err);
+    res.status(500).json({ message: "Failed to add product" });
   }
 };
 
@@ -51,4 +65,22 @@ const deleteProduct = async (req, res) => {
   }
 };
 
-export {getProduct,getAllProducts,addProduct,updateProduct,deleteProduct}
+const getImage = async (req, res) => {
+  try {
+    const productId = req.params.id;  // Extract the dynamic ID from the request
+    const product = await Product.findById(productId);  // Find product by ID
+
+    if (!product || !product.image) {
+      return res.status(404).json({ error: 'Image not found' });
+    }
+
+    const imagePath = path.join(__dirname, '../uploads', product.image);  // Assuming product.image is the filename
+    res.sendFile(imagePath);  // Send the image as a response
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Server error' });
+  }
+};
+
+
+export { getProduct, getAllProducts, addProduct, updateProduct, deleteProduct, getImage };

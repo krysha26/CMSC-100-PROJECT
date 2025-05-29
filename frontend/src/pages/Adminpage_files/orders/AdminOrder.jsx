@@ -16,7 +16,7 @@ const AdminOrder = () => {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await axios.get('https://anico-api.vercel.app/api/orders');
+      const res = await axios.get('http://localhost:5000/api/orders');
       if (Array.isArray(res.data)) {
         setOrders(res.data);
       } else {

@@ -1,5 +1,5 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState } from 'react';
+import { Pencil } from 'lucide-react';
 
 const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
   const [sortConfig, setSortConfig] = useState({ key: 'productName', direction: 'asc' });
@@ -13,14 +13,18 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
   };
 
   const sortedProducts = [...products].sort((a, b) => {
-    if (sortConfig.key === 'productPrice' || sortConfig.key === 'productQuantity') {
-      return sortConfig.direction === 'asc' 
-        ? a[sortConfig.key] - b[sortConfig.key]
-        : b[sortConfig.key] - a[sortConfig.key];
+    const aVal = a[sortConfig.key];
+    const bVal = b[sortConfig.key];
+
+    if (typeof aVal === 'number' && typeof bVal === 'number') {
+      return sortConfig.direction === 'asc' ? aVal - bVal : bVal - aVal;
     }
+
+    const aStr = String(aVal ?? '');
+    const bStr = String(bVal ?? '');
     return sortConfig.direction === 'asc'
-      ? a[sortConfig.key].localeCompare(b[sortConfig.key])
-      : b[sortConfig.key].localeCompare(a[sortConfig.key]);
+      ? aStr.localeCompare(bStr)
+      : bStr.localeCompare(aStr);
   });
 
   const renderType = (typeCode) => {
@@ -28,120 +32,65 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
   };
 
   return (
-    <div className="overflow-x-auto">
-      <table className="min-w-full divide-y divide-gray-200">
-        <thead className="bg-gray-50">
-          <tr>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              onClick={() => sortProducts('productName')}
+    <div className="flex flex-col h-full relative w-full">
+      {/* Sticky header */}
+      <div className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr_0.8fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10 w-full">
+        <button onClick={() => sortProducts('productName')} className="text-left hover:text-gray-800">
+          Product Name {sortConfig.key === 'productName' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+        </button>
+        <button onClick={() => sortProducts('productType')} className="text-left hover:text-gray-800">
+          Type {sortConfig.key === 'productType' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+        </button>
+        <button onClick={() => sortProducts('productPrice')} className="text-left hover:text-gray-800">
+          Price {sortConfig.key === 'productPrice' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+        </button>
+        <span className="text-left">Description</span>
+        <button onClick={() => sortProducts('productQuantity')} className="text-left hover:text-gray-800">
+          Quantity {sortConfig.key === 'productQuantity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
+        </button>
+        <span className="text-left flex justify-end">Actions</span>
+      </div>
+
+      {/* Scrollable content */}
+      <div className="overflow-y-auto flex-1 w-full">
+        {sortedProducts.length === 0 ? (
+          <div className="px-4 py-4 text-center text-gray-500">
+            No products found
+          </div>
+        ) : (
+          sortedProducts.map((product) => (
+            <div
+              key={product._id}
+              className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr_0.8fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50 w-full"
             >
-              Product Name {sortConfig.key === 'productName' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              onClick={() => sortProducts('productType')}
-            >
-              Type {sortConfig.key === 'productType' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              onClick={() => sortProducts('productPrice')}
-            >
-              Price {sortConfig.key === 'productPrice' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Description
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
-              onClick={() => sortProducts('productQuantity')}
-            >
-              Quantity {sortConfig.key === 'productQuantity' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Photos
-            </th>
-            <th 
-              scope="col" 
-              className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider"
-            >
-              Actions
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {sortedProducts.length === 0 ? (
-            <tr>
-              <td colSpan="7" className="px-6 py-4 text-center text-sm text-gray-500">
-                No products found
-              </td>
-            </tr>
-          ) : (
-            sortedProducts.map((product) => (
-              <tr key={product._id} className="hover:bg-gray-50">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {product.productName}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {renderType(product.productType)}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  ₱{product.productPrice}
-                </td>
-                <td className="px-6 py-4 text-sm text-gray-500 max-w-xs truncate">
-                  {product.productDescription}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.productQuantity}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {product.photos && product.photos.length > 0 ? (
-                    <div className="flex space-x-2">
-                      {product.photos.map((photo, index) => (
-                        <img
-                          key={index}
-                          src={photo}
-                          alt={`${product.productName} - ${index + 1}`}
-                          className="h-10 w-10 rounded-full object-cover"
-                        />
-                      ))}
-                    </div>
-                  ) : (
-                    <span className="text-gray-400">No photos</span>
-                  )}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  <button
-                    onClick={() => onDeleteProduct(product._id)}
-                    className="text-red-600 hover:text-red-900 mr-3"
-                  >
-                    Delete
-                  </button>
-                  <button
-                    onClick={() => onUpdateProduct(product)}
-                    className="text-blue-600 hover:text-blue-900"
-                  >
-                    Edit
-                  </button>
-                </td>
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+              <div className="flex items-center space-x-3">
+                <span className="flex justify-center items-center text-gray-800 break-words">{product.productName}</span>
+              </div>
+              <span className="flex text-gray-800 break-words">{renderType(product.productType)}</span>
+              <span className="flex text-gray-800 break-words">₱{product.productPrice}</span>
+              <span className="flex justify-center items-center text-gray-800 break-words truncate">{product.productDescription}</span>
+              <span className="flex justify-center items-center text-gray-800 break-words">{product.productQuantity}</span>
+              <div className="flex justify-end space-x-2 pr-1">
+                <button
+                  onClick={() => onUpdateProduct(product)}
+                  className="inline-flex px-2.5 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-gray-500 hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
+                >
+                  <Pencil className="w-3 h-3" />
+                </button>
+                <button
+                  onClick={() => onDeleteProduct(product._id)}
+                  className="inline-flex px-2.5 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
+                >
+                  ✕
+                </button>
+              </div>
+
+            </div>
+          ))
+        )}
+      </div>
     </div>
   );
 };
 
-export default ProductList; 
+export default ProductList;

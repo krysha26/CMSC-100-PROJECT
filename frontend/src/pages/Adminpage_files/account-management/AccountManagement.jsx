@@ -29,7 +29,7 @@ const AccountManagement = () => {
   useEffect(() => {
     const fetchAccounts = async () => {
       try {
-        const response = await axios.get('https://anico-api.vercel.app/api/users');
+        const response = await axios.get('http://localhost:5000/api/users');
         console.log("Fetched users:", response.data);  // The data is in response.data
         setAccounts(response.data);  // Update the state with the fetched accounts
       } catch (error) {
@@ -73,7 +73,7 @@ const handleDeleteAccount = async (accountId) => {
   try {
     console.log("Attempting to delete account with ID:", accountId);
 
-    const response = await axios.delete(`https://anico-api.vercel.app/api/users/${accountId}`);
+    const response = await axios.delete(`http://localhost:5000/api/users/${accountId}`);
 
     if (response.status === 200) {
       const updatedAccounts = accounts.filter(acc => String(acc._id) !== String(accountId));

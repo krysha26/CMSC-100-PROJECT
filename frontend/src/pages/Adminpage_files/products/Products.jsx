@@ -14,7 +14,6 @@ const Products = () => {
     productType: 1,
     productPrice: '',
     productQuantity: '',
-    photos: []
   });
 
   useEffect(() => {
@@ -39,51 +38,42 @@ const Products = () => {
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handlePhotoUpload = (e) => {
-    const files = Array.from(e.target.files);
-    // In a real application, you would upload these files to a server
-    // and get back URLs. For now, we'll use FileReader to create local URLs
-    const photoPromises = files.map(file => {
-      return new Promise((resolve) => {
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          resolve(reader.result);
-        };
-        reader.readAsDataURL(file);
-      });
+const handlePhotoUpload = (e) => {
+  const files = Array.from(e.target.files);
+  setNewProduct((prev) => ({
+    ...prev,
+    photos: prev.photos ? [...prev.photos, ...files] : files,  // Ensure photos is an array
+  }));
+};
+
+
+const handleAddProduct = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.post('http://localhost:5000/api/products', newProduct, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
     });
 
-    Promise.all(photoPromises).then(photoUrls => {
-      setNewProduct(prev => ({
-        ...prev,
-        photos: [...prev.photos, ...photoUrls]
-      }));
+    setProducts([...products, res.data]);
+    resetForm();
+    setIsModalOpen(false);
+  } catch (err) {
+    console.error('Error adding product:', err);
+  }
+};
+
+
+  const resetForm = () => {
+    setNewProduct({
+      productName: '',
+      productDescription: '',
+      productType: 1,
+      productPrice: '',
+      productQuantity: '',
     });
-  };
-
-  const handleAddProduct = async (e) => {
-    e.preventDefault();
-    try {
-      const res = await axios.post('http://localhost:5000/api/products', newProduct);
-      setProducts([...products, res.data]);
-      setNewProduct({
-        productName: '',
-        productDescription: '',
-        productType: 1,
-        productPrice: '',
-        productQuantity: '',
-        photos: []
-      });
-      setIsModalOpen(false);
-    } catch (err) {
-      console.error('Error adding product:', err);
-    }
-  };
-
-  const handleUpdateProduct = async (product) => {
-    setEditingProduct(product);
-    setNewProduct(product);
-    setIsModalOpen(true);
+    setEditingProduct(null);
   };
 
   const handleDeleteProduct = async (id) => {
@@ -95,52 +85,79 @@ const Products = () => {
     }
   };
 
-  return (
+const handleEditSubmit = async (e) => {
+  e.preventDefault();
+  try {
+    const res = await axios.put(
+  `http://localhost:5000/api/products/${editingProduct._id}`,
+  newProduct,
+  {
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  }
+);
+
+
+    setProducts(products.map((p) => (p._id === editingProduct._id ? res.data : p)));
+    resetForm();
+    setIsModalOpen(false);
+  } catch (err) {
+    console.error('Error updating product:', err);
+  }
+};
+
+
+
+const handleUpdateProduct = (product) => {
+  setEditingProduct(product);  // Set the product to be edited
+  setNewProduct({
+    productName: product.productName,
+    productDescription: product.productDescription,
+    productType: product.productType,
+    productPrice: product.productPrice,
+    productQuantity: product.productQuantity,
+  });
+  setIsModalOpen(true); // Open the modal
+};
+
+return (
     <div className="products-page min-h-screen">
-      <AdminHeader name="Product Management" />
-      <div className="content-area p-6 flex gap-6">
-        <div className="w-2/3 relative rounded-lg border border-gray-200 overflow-hidden flex-shrink-0 h-[calc(100vh-180px)]">
-          <div className="product-list-card bg-white rounded-lg h-full">
-            <div className="flex justify-between items-center px-6 pt-6 pb-4">
-              <h2 className="text-xl font-medium text-[#333]">
-                Product List
-              </h2>
-              <button
-                onClick={() => {
-                  setEditingProduct(null);
-                  setNewProduct({
-                    productName: '',
-                    productDescription: '',
-                    productType: 1,
-                    productPrice: '',
-                    productQuantity: '',
-                    photos: []
-                  });
-                  setIsModalOpen(true);
-                }}
-                className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
-              >
-                Add Product
-              </button>
-            </div>
-            <div className="h-[calc(100%-80px)] px-6">
-              <ProductList
-                products={products}
-                onDeleteProduct={handleDeleteProduct}
-                onUpdateProduct={handleUpdateProduct}
-              />
-            </div>
+      <AdminHeader name="Order Management" />
+      <div className="content-area p-6">
+        <div className="bg-white rounded-lg border border-gray-200 p-6 h-[calc(100vh-180px)]">
+          <div className="flex justify-between items-center mb-6">
+            <h2 className="text-xl font-medium text-[#333]">
+              Product List
+            </h2>
+            <button
+              onClick={() => {
+                resetForm();
+                setIsModalOpen(true);
+              }}
+              className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition duration-200"
+            >
+              Add Product
+            </button>
+          </div>
+          <div className="h-[calc(100%-80px)] px-6 py-4 overflow-y-auto">
+            <ProductList
+              products={products}
+              onDeleteProduct={handleDeleteProduct}
+              onUpdateProduct={handleUpdateProduct}
+            />
           </div>
         </div>
 
-        {/* Add/Edit Product Modal */}
+        {/* Modal */}
         {isModalOpen && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
-              <h3 className="text-xl font-medium mb-4">
+          <div style={{backgroundColor: 'rgba(0, 0, 0, 0.6)'}}className="fixed inset-0 z-50  flex items-center justify-center p-4">
+
+            <div className="bg-white w-full max-w-lg rounded-xl border border-gray-200 p-6">
+              <h3 className="text-xl font-semibold text-gray-800 mb-4">
                 {editingProduct ? 'Edit Product' : 'Add New Product'}
               </h3>
-              <form onSubmit={handleAddProduct} className="space-y-4">
+              <form onSubmit={editingProduct ? handleEditSubmit : handleAddProduct} className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Product Name</label>
                   <input
@@ -148,7 +165,7 @@ const Products = () => {
                     name="productName"
                     value={newProduct.productName}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 focus:outline-none transition"
                     required
                   />
                 </div>
@@ -158,7 +175,7 @@ const Products = () => {
                     name="productType"
                     value={newProduct.productType}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 focus:outline-none transition"
                   >
                     <option value={1}>Crop</option>
                     <option value={2}>Poultry</option>
@@ -171,7 +188,7 @@ const Products = () => {
                     name="productPrice"
                     value={newProduct.productPrice}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 focus:outline-none transition"
                     required
                   />
                 </div>
@@ -181,7 +198,8 @@ const Products = () => {
                     name="productDescription"
                     value={newProduct.productDescription}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 focus:outline-none transition"
+                    rows={3}
                     required
                   />
                 </div>
@@ -192,43 +210,21 @@ const Products = () => {
                     name="productQuantity"
                     value={newProduct.productQuantity}
                     onChange={handleInputChange}
-                    className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
+                    className="mt-1 block w-full rounded-md border border-gray-300 focus:outline-none transition"
                     required
                   />
                 </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Photos</label>
-                  <input
-                    type="file"
-                    multiple
-                    accept="image/*"
-                    onChange={handlePhotoUpload}
-                    className="mt-1 block w-full"
-                  />
-                  {newProduct.photos.length > 0 && (
-                    <div className="mt-2 flex flex-wrap gap-2">
-                      {newProduct.photos.map((photo, index) => (
-                        <img
-                          key={index}
-                          src={photo}
-                          alt={`Preview ${index + 1}`}
-                          className="h-20 w-20 object-cover rounded"
-                        />
-                      ))}
-                    </div>
-                  )}
-                </div>
-                <div className="flex justify-end space-x-3 mt-6">
+                <div className="flex justify-end gap-3 pt-4">
                   <button
                     type="button"
                     onClick={() => setIsModalOpen(false)}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-50"
+                    className="px-4 py-2 border border-gray-300 rounded-md text-gray-700 hover:bg-gray-100 transition"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
+                    className="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition"
                   >
                     {editingProduct ? 'Update' : 'Add'} Product
                   </button>
