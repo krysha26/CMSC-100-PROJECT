@@ -80,7 +80,7 @@ body {
   background-color: rgb(255, 255, 255);
 }
 
-button {
+/* button {
   width: 100%;
   padding: 0.6rem;
   background-color: #5a8a23;
@@ -89,7 +89,7 @@ button {
   border-radius: 4px;
   cursor: pointer;
   font-family: 'Poppins';
-}
+} */
 
 button:hover {
   background-color: #54a927;
