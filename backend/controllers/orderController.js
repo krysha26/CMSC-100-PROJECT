@@ -32,6 +32,7 @@ const getAllOrders = async (req, res) => {
 
 // POST /api/orders
 const addOrder = async (req, res) => {
+  console.log("confriming")
   try {
     const order = new Order(req.body);
     await order.save();

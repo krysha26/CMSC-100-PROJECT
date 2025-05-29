@@ -90,14 +90,14 @@ const signIn = async (req, res) => {
     const isMatch = await argon2.verify(user.password, password);
     console.log("match:",isMatch);// Changed positioning of hashed password and entered password
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { // ADD API IN .ENV
+    const token = jwt.sign({ id: user._id }, 'random', { // ADD API IN .ENV
       expiresIn: "1d", // Token expiration
     });
-    console.log("token here:" ,token);
+    console.log("token here:" );
   
     res.status(200).json({
       token,
-      user: { id: user._id }
+      user: { id: user._id } // Add email as well
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

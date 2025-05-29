@@ -5,9 +5,18 @@ import SignUp from "./pages/SignUp";
 import AccountManagement from "./pages/Adminpage_files/AccountManagement";
 import SignIn from "./pages/SignIn";
 import Products from "./pages/Adminpage_files/Products";
+import Cart from "./pages/Cart";
+import { useState, useEffect } from "react"; // ✅ include useEffect
 
 function App() {
-  const routes = [ // Add child parameter
+  const [cart, setCart] = useState([]);
+
+  // ✅ Track cart changes
+  useEffect(() => {
+    console.log("🛒 Cart updated:", cart);
+  }, [cart]);
+
+  const routes = [
     {
       path: "/",
       element: <SignIn />,
@@ -18,7 +27,7 @@ function App() {
     },
     {
       path: "/shop",
-      element: <Shop />,
+      element: <Shop cart={cart} setCart={setCart} />,
     },
     {
       path: "/account-management",
@@ -26,10 +35,14 @@ function App() {
     },
     {
       path: "/products",
-      element: <Products />  // <-- Add this route
-    }
+      element: <Products />
+    },
+    {
+      path: "/cart",
+      element: <Cart cart={cart} setCart={setCart} />
+    },
   ];
-  
+
   const router = createBrowserRouter(routes);
   return <RouterProvider router={router} />;
 }

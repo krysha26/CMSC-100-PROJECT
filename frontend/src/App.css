@@ -3,6 +3,7 @@ html, body, #root {
   margin: 0;
   height: 100%;
   width: 100%;
+  background-color: white;
 }
 
 
@@ -94,4 +95,63 @@ button:hover {
 h1 {
   font-family: 'PoppinsB';
   
+}
+
+
+/*Toast */
+.custom-toast {
+  position: relative;
+  padding: 16px;
+  padding-top: 4px;
+  background-color: #fff;
+  color: #000;
+  font-family: 'Poppins';
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.custom-toast-body {
+  font-family: 'Poppins';
+  font-size: 14px;
+}
+
+.custom-toast-close {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  margin-right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #444;
+  width: 0;
+}
+
+.custom-toast-close:hover {
+  color: #000;
+  background-color: transparent;
+}
+
+.titleSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: -20px;
+}
+
+.buttonRd {
+  border-radius: 8px;
+  padding: 3px 20px; /* vertical and horizontal padding */
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  font-size: 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
 }

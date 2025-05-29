@@ -1,6 +1,7 @@
 .shopSection {
     color: #1a1a1a;
     font-family: 'Poppins';
+    background-color: white;
 
 }
 
@@ -8,6 +9,18 @@
     margin: 70px;
     margin-top: 30px;
     
+}
+
+.foodCards {
+    display: flex;
+    max-width: 100%;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: left;
+    padding-left: 5%;
+    font-family: 'Poppins';
+    margin-top: -20px;
 }
 
 

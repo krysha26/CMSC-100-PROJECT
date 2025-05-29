@@ -16,15 +16,15 @@ function SignIn() {
     console.log("Signing in with:", { email, password });
 
     try { // TO-DO: Uncomment later
-      // const response = await axios.post('http://localhost:5000/api/users/signIn', {
-      //   email,
-      //   password
-      // });
+      const response = await axios.post('http://localhost:5000/api/users/signIn', {
+        email,
+        password
+      });
 
-      // const { token, user } = response.data;
+      const { token, user } = response.data;
 
-      // // Optional: Store token in localStorage or cookie
-      // localStorage.setItem("token", token);
+      // Optional: Store token in localStorage or cookie
+      localStorage.setItem("token", token);
 
       toast.success("Sign in successful!", {
         autoClose: 1000,
