@@ -22,7 +22,7 @@ const Cart = ({ cart, setCart }) => {
   const [item, setItems] = useState(cart);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]); // full product details
-  const shippingFee = 39; // constant 
+  const shippingFee = 39; // constant
   const [subTot, setsubTot] = useState(0);
 
   const computeSubTot = () => {
@@ -193,10 +193,10 @@ const Cart = ({ cart, setCart }) => {
                   <Typography fontFamily='PoppinsR' color='#1A1A1A' width='100%' sx={{ fontSize: '14px', display:'flex', flexDirection:'row', alignItems:'center', justifyContent:'center' }}>
                     <CheckBoxIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px' }} /> Cash On Delivery
                   </Typography>
-              </Stack>    
+              </Stack>
          </Card>
                 {/*Add Button Here For Checkout Traverse(items) Add To Cart */}
-                <Button 
+                <Button
                   onClick={handleCheckout}
                   variant="contained" color="primary" sx={{backgroundColor:'#1D8B37',fontFamily:'Poppins'}}>
                   Checkout

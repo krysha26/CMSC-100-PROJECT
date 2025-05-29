@@ -17,13 +17,14 @@
 
 .mainSection {
     flex: 0 0 70%;
-    margin: 30px 20px 30px 70px;
+    margin: 70px 20px 30px 70px;
     overflow-y: auto;        /* Allow vertical scroll */
     overflow-x: hidden;      /* Prevent horizontal scroll */
     background-color: white;
     padding-right: 10px;
     box-sizing: border-box;  /* Ensure padding doesn't cause overflow */
 }
+
 
 
 .sideCart {

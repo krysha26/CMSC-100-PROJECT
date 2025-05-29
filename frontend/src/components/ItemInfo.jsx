@@ -191,7 +191,7 @@ const handleAddToCart = () => {
                 <Typography fontFamily="Poppins" variant="h6" color="#1A1A1A">
                   Quantity
                 </Typography>
-                <Stepper value={pickedQuant} onChange={setPickedQuant} width="20%" height="40%" />
+                <Stepper value={pickedQuant} onChange={setPickedQuant} width="40%" height="40%" />
                 <Typography fontFamily="Poppins" fontSize={12} color="#0000009D">
                   Stock: {locQuant}
                 </Typography>

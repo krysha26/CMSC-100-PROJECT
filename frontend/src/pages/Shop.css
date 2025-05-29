@@ -7,7 +7,7 @@
 
 .foodSection {
     margin: 70px;
-    margin-top: 30px;
+    margin-top: 70px;
     
 }
 
@@ -54,15 +54,6 @@
 }
 
 /* General styles */
-
-p {
-    font-size: 13px;
-    color: #1D8B37;
-}
-
-h3 {
-    font-size: 30px;
-}
 
 .buttonRd {
   border-radius: 8px;

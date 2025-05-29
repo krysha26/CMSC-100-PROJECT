@@ -107,7 +107,7 @@ const Orders = ({ cart, setCart }) => {
              
 
               {/* Filter Buttons */}
-              <div style={{ marginTop: 10, display: 'flex', gap: 8 }}>
+              <div style={{ marginTop: 0, display: 'flex', gap: 8 }}>
                 <button
                   className="buttonRd"
                   onClick={() => setFilterStatus('all')}
@@ -191,18 +191,10 @@ const Orders = ({ cart, setCart }) => {
                 <Typography fontFamily='Poppins' color='#1A1A1A' sx={{ display: 'flex', flexDirection: 'row' }}>
                   <CheckCircleIcon sx={{ color: '#1D8B37', mr: 1 }} /> COMPLETED ORDERS ({completedCount})
                 </Typography>
-                <Stack sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent:'space-between',
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  width: '80%',
-                  fontSize: 12
-                }}>
-                  <CheckBoxIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px' }} /> Cash On Delivery
-                </Stack>
+                <Box >
+                  <CheckBoxIcon sx={{ color: '#1D8B37', mr: 1, fontSize:'16px', }} /> 
+                  Complete
+                </Box>
               </Stack>
             </Card>
 
@@ -220,18 +212,10 @@ const Orders = ({ cart, setCart }) => {
                  <Typography fontFamily='Poppins' color='#1A1A1A' sx={{ display: 'flex', flexDirection: 'row' }}>
                   <CancelIcon sx={{ color: '#F34F30', mr: 1 }} /> CANCELLED ORDERS ({cancelledCount})
                 </Typography>
-                  <Stack sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent:'space-between',
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  width: '80%',
-                  fontSize: 12
-                }}>
-                  <CancelIcon sx={{ color: '#F34F30', mr: 1, fontSize:'16px' }} /> Cash On Delivery
-                </Stack>
+                   <Box >
+                  <CancelIcon sx={{ color: '#F34F30', mr: 1, fontSize:'16px', }} /> 
+                  Cancelled
+                </Box>
               </Stack>    
          </Card>
 
@@ -249,18 +233,9 @@ const Orders = ({ cart, setCart }) => {
                 <Typography fontFamily='Poppins' color='#1A1A1A' sx={{ display: 'flex', flexDirection: 'row' }}>
                   <PaymentsIcon sx={{ color: '#FFB800', mr: 1 }} /> PENDING ORDERS ({pendingCount})
                 </Typography>
-                <Stack sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                  justifyContent:'space-between',
-                  paddingLeft: 20,
-                  paddingRight: 20,
-                  width: '80%',
-                  fontSize: 12
-                }}>
-                  <PaymentsIcon sx={{ color: '#FFB800', mr: 1, fontSize:'16px' }} /> Cash On Delivery
-                </Stack>
+                <Box>
+                  <PaymentsIcon sx={{ color: '#FFB800', mr: 1, fontSize:'14px' }} /> Pending
+                </Box>
               </Stack>
             </Card>
 
