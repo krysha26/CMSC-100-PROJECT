@@ -6,7 +6,7 @@ import { format, subDays, subMonths, isWithinInterval, parseISO, startOfDay, end
 
 const SalesReport = () => {
   const [orders, setOrders] = useState([]);
-  const [filteredOrders, setFilteredOrders] = useState([]);
+  const [aggregatedData, setAggregatedData] = useState([]);
   const [startDate, setStartDate] = useState(null);
   const [selectedPeriod, setSelectedPeriod] = useState(null);
   const [isDateFiltered, setIsDateFiltered] = useState(false);
@@ -14,6 +14,7 @@ const SalesReport = () => {
   const [totalOrders, setTotalOrders] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [dateRangeDisplay, setDateRangeDisplay] = useState('');
 
   const fetchOrders = async () => {
     try {
@@ -22,9 +23,10 @@ const SalesReport = () => {
       const res = await axios.get('https://anico-api.vercel.app/api/orders');
       if (Array.isArray(res.data)) {
         setOrders(res.data);
-        // Set initial filtered orders to all completed orders
+        // Set initial aggregated data
         const completedOrders = res.data.filter(order => order.orderStatus === 1);
-        setFilteredOrders(completedOrders);
+        const initialAggregated = aggregateOrdersByProduct(completedOrders);
+        setAggregatedData(initialAggregated);
         updateTotals(completedOrders);
       } else {
         setError('Invalid data format received from server');
@@ -45,23 +47,28 @@ const SalesReport = () => {
   const getDateRange = (period) => {
     if (!startDate) return null;
     
+    // The selected date is the end date
     const endDate = startDate;
     let startRange;
 
     switch (period) {
       case '7days':
+        // Calculate 6 days before the end date
         startRange = subDays(endDate, 6);
         break;
       case '30days':
+        // Calculate 29 days before the end date
         startRange = subDays(endDate, 29);
         break;
       case '12months':
+        // Calculate 11 months before the end date
         startRange = subMonths(endDate, 11);
         break;
       default:
         return null;
     }
 
+    // Return with startRange first, endDate second for chronological order
     return { startRange, endDate };
   };
 
@@ -72,25 +79,73 @@ const SalesReport = () => {
     setTotalOrders(orders.length);
   };
 
-  const handleDateChange = (date) => {
-    if (!date) {
-      setStartDate(null);
-      setIsDateFiltered(false);
+  const updateDateRangeDisplay = () => {
+    if (!startDate) {
+      setDateRangeDisplay('');
       return;
     }
+
+    if (selectedPeriod) {
+      const dateRange = getDateRange(selectedPeriod);
+      if (dateRange) {
+        setDateRangeDisplay(`${format(dateRange.startRange, 'MMM d, yyyy')} - ${format(dateRange.endDate, 'MMM d, yyyy')}`);
+      }
+    } else {
+      // If no period, just show the single date
+      setDateRangeDisplay(format(startDate, 'MMM d, yyyy'));
+    }
+  };
+
+  const handleDateChange = (date) => {
+    if (!date) {
+      // Clear everything immediately
+      setStartDate(null);
+      setIsDateFiltered(false);
+      setSelectedPeriod(null);
+      setDateRangeDisplay('');
+      return;
+    }
+
+    // Calculate new date first
     const newDate = parseISO(date);
+    
+    // Update all states and display synchronously
     setStartDate(newDate);
     setIsDateFiltered(true);
+
+    // Calculate and set display based on current period state
+    if (selectedPeriod) {
+      // If there's a period, calculate the range with the new date
+      const tempDateRange = {
+        endDate: newDate,
+        startRange: selectedPeriod === '7days' ? subDays(newDate, 6) :
+                   selectedPeriod === '30days' ? subDays(newDate, 29) :
+                   subMonths(newDate, 11)
+      };
+      setDateRangeDisplay(`${format(tempDateRange.startRange, 'MMM d, yyyy')} - ${format(tempDateRange.endDate, 'MMM d, yyyy')}`);
+    } else {
+      // If no period, just show the single date
+      setDateRangeDisplay(format(newDate, 'MMM d, yyyy'));
+    }
   };
 
   const handlePeriodSelect = (period) => {
     if (!startDate) return;
     
-    if (period === selectedPeriod) {
-      setSelectedPeriod(null);
-      setIsDateFiltered(true);
+    // Calculate the new period state first
+    const newPeriod = period === selectedPeriod ? null : period;
+    setSelectedPeriod(newPeriod);
+    setIsDateFiltered(true);
+
+    // Immediately calculate and set the display
+    if (newPeriod) {
+      const dateRange = getDateRange(newPeriod);
+      if (dateRange) {
+        setDateRangeDisplay(`${format(dateRange.startRange, 'MMM d, yyyy')} - ${format(dateRange.endDate, 'MMM d, yyyy')}`);
+      }
     } else {
-      setSelectedPeriod(period);
+      // If no period, just show the single date
+      setDateRangeDisplay(format(startDate, 'MMM d, yyyy'));
     }
   };
 
@@ -98,22 +153,60 @@ const SalesReport = () => {
     setSelectedPeriod(null);
     setIsDateFiltered(false);
     setStartDate(null);
+    setDateRangeDisplay('');
     const completedOrders = orders.filter(order => order.orderStatus === 1);
-    setFilteredOrders(completedOrders);
+    const aggregated = aggregateOrdersByProduct(completedOrders);
+    setAggregatedData(aggregated);
     updateTotals(completedOrders);
+  };
+
+  const aggregateOrdersByProduct = (filteredOrders) => {
+    const productMap = new Map();
+
+    // First, get all unique products from all orders
+    orders.forEach(order => {
+      if (order.productId && order.productId._id) {
+        const productId = order.productId._id;
+        if (!productMap.has(productId)) {
+          productMap.set(productId, {
+            _id: productId, // Add unique _id for React key
+            productId: order.productId,
+            productName: order.productId.productName || 'N/A',
+            productPrice: order.productId.productPrice || 0,
+            totalQuantity: 0,
+            totalSales: 0,
+            dateRange: dateRangeDisplay
+          });
+        }
+      }
+    });
+
+    // Then, update quantities and sales for filtered orders
+    filteredOrders.forEach(order => {
+      if (order.productId && order.productId._id) {
+        const productId = order.productId._id;
+        const product = productMap.get(productId);
+        if (product) {
+          product.totalQuantity += (order.orderQuantity || 0);
+          product.totalSales += ((order.productId.productPrice || 0) * (order.orderQuantity || 0));
+        }
+      }
+    });
+
+    return Array.from(productMap.values());
   };
 
   const applyFilters = () => {
     let filtered = orders.filter(order => order.orderStatus === 1);
 
-    // If no filters are active, return all completed orders
     if (!isDateFiltered && !selectedPeriod) {
-      setFilteredOrders(filtered);
+      const aggregated = aggregateOrdersByProduct(filtered);
+      setAggregatedData(aggregated);
+      updateDateRangeDisplay();
       updateTotals(filtered);
       return;
     }
 
-    // Apply period filter if selected
     if (selectedPeriod) {
       const dateRange = getDateRange(selectedPeriod);
       if (dateRange) {
@@ -125,9 +218,7 @@ const SalesReport = () => {
           });
         });
       }
-    }
-    // Apply specific date filter if active
-    else if (isDateFiltered) {
+    } else if (isDateFiltered) {
       const dayStart = startOfDay(startDate);
       const dayEnd = endOfDay(startDate);
       filtered = filtered.filter(order => {
@@ -136,13 +227,22 @@ const SalesReport = () => {
       });
     }
 
-    setFilteredOrders(filtered);
+    const aggregated = aggregateOrdersByProduct(filtered);
+    setAggregatedData(aggregated);
+    updateDateRangeDisplay();
     updateTotals(filtered);
   };
 
   useEffect(() => {
     applyFilters();
   }, [orders, startDate, selectedPeriod, isDateFiltered]);
+
+  useEffect(() => {
+    // Only update if we have a startDate but no display
+    if (startDate && !dateRangeDisplay) {
+      updateDateRangeDisplay();
+    }
+  }, [startDate, selectedPeriod, dateRangeDisplay]);
 
   return (
     <div className="sales-report-page min-h-screen">
@@ -175,12 +275,16 @@ const SalesReport = () => {
                           </button>
                         )}
                       </div>
-                      <div className="w-full mb-3 relative">
+                      <div 
+                        className="w-full mb-3 relative border border-gray-300 rounded-md cursor-pointer"
+                        onClick={() => document.getElementById('dateInput').showPicker()}
+                      >
                         <input
+                          id="dateInput"
                           type="date"
                           value={startDate ? format(startDate, 'yyyy-MM-dd') : ''}
                           onChange={(e) => handleDateChange(e.target.value)}
-                          className={`block w-full px-3 py-2 text-sm border border-gray-300 rounded-md cursor-pointer ${
+                          className={`block w-full px-3 py-2 text-sm bg-transparent cursor-pointer focus:outline-none [&::-webkit-datetime-edit]:hidden [&::-webkit-datetime-edit-fields-wrapper]:hidden [&::-webkit-datetime-edit-text]:hidden [&::-webkit-datetime-edit-month-field]:hidden [&::-webkit-datetime-edit-day-field]:hidden [&::-webkit-datetime-edit-year-field]:hidden [&::-webkit-inner-spin-button]:hidden [&::-webkit-calendar-picker-indicator]:opacity-100 ${
                             !startDate ? 'text-transparent' : 'text-gray-900'
                           }`}
                           style={{
@@ -188,11 +292,17 @@ const SalesReport = () => {
                             '--webkit-calendar-picker-indicator-color': '#6B7280'
                           }}
                         />
-                        {!startDate && (
+                        {!startDate ? (
                           <span 
-                            className="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none select-none"
+                            className="absolute left-9.5 top-1/2 -translate-y-1/2 text-sm text-gray-500 pointer-events-none select-none"
                           >
-                            Start date
+                            Select date
+                          </span>
+                        ) : (
+                          <span 
+                            className="absolute left-9.5 top-1/2 -translate-y-1/2 text-sm text-gray-900 pointer-events-none select-none"
+                          >
+                            {format(startDate, 'MMM d, yyyy')}
                           </span>
                         )}
                       </div>
@@ -258,7 +368,7 @@ const SalesReport = () => {
                 <p className="text-red-500">{error}</p>
               </div>
             ) : (
-              <ReportList orders={filteredOrders} />
+              <ReportList data={aggregatedData} />
             )}
           </div>
         </div>

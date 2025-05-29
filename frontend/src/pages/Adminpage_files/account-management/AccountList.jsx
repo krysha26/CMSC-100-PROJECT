@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import Icons from '../../../components/common/Icons';
 
-const AccountList = ({ accounts, onDeleteAccount }) => {
+const AccountList = ({ accounts, onDeleteAccount, onEditAccount, onViewAccount, onToggleStatus }) => {
   const [sortConfig, setSortConfig] = useState({ key: 'fullName', direction: 'asc' });
 
   const sortAccounts = (key) => {
@@ -40,7 +40,7 @@ const AccountList = ({ accounts, onDeleteAccount }) => {
   return (
     <div className="flex flex-col h-full min-h-0">
       {/* Sticky header */}
-      <div className="flex-none grid grid-cols-[2.5fr_2.5fr_1fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10">
+      <div className="flex-none grid grid-cols-[2fr_2fr_1.5fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10">
         <button 
           onClick={() => sortAccounts('fullName')}
           className="text-left hover:text-gray-800 cursor-pointer"
@@ -53,7 +53,7 @@ const AccountList = ({ accounts, onDeleteAccount }) => {
         >
           Email {sortConfig.key === 'email' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
-        <span className="text-left">Action</span>
+        <span className="text-right"> Actions</span>
       </div>
       
       {/* Scrollable content */}
@@ -61,19 +61,25 @@ const AccountList = ({ accounts, onDeleteAccount }) => {
         {sortedAccounts.map((account) => (
           <div
             key={account._id}
-            className="grid grid-cols-[2.5fr_2.5fr_1fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50"
+            className="grid grid-cols-[2fr_2fr_1.5fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50"
           >
             <span className="break-words text-gray-800 cursor-pointer">
               {`${account.firstName} ${account.middleName ? account.middleName + ' ' : ''}${account.lastName}`}
             </span>
             <span className="break-words text-gray-800 cursor-pointer">{account.email}</span>
-            <button
-              onClick={() => onDeleteAccount(account._id)}
-              title="Delete Account"
-              className="bg-transparent border-none cursor-pointer p-0 flex hover:text-red-600 transition-colors"
-            >
-              <Icons name="delete" size={20} color="currentColor" />
-            </button>
+            
+            {/* Extended Action Buttons */}
+            <div className="flex items-center justify-center gap-2">
+              {onDeleteAccount && (
+                <button
+                  onClick={() => onDeleteAccount(account._id)}
+                  title="Delete Account"
+                  className="bg-transparent border-none cursor-pointer flex hover:text-red-600 transition-colors rounded ml-auto"
+                >
+                  <Icons name="delete" size={18} color="currentColor" />
+                </button>
+              )}
+            </div>
           </div>
         ))}
       </div>

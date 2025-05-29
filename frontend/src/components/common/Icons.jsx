@@ -1,23 +1,9 @@
 import React from 'react';
-import { FaUserCircle, FaAngleDown, FaShoppingCart, FaFileInvoiceDollar } from "react-icons/fa";
-import {
-  IoLogOut,
-  IoSearchOutline,
-  IoFilterOutline,
-  IoCloseOutline,
-  IoArrowBack,
-  IoAdd,
-  IoPencilOutline, // Added for 'edit' icon
-  IoTrashOutline // Added for 'delete' icon
-} from "react-icons/io5";
-import { HiDotsHorizontal } from "react-icons/hi";
-import { LuWheat } from "react-icons/lu";
-
 import {
   LayoutGrid,
-  Users as LucideUsers,
+  Users,
   FileText,
-  Menu as LucideMenu,
+  Menu,
   ChevronRight,
   CreditCard,
   BarChart2,
@@ -28,42 +14,54 @@ import {
   UserCog,
   Package,
   ShoppingBag,
-  BarChart
+  BarChart,
+  LogOut,
+  Search,
+  Filter,
+  X,
+  MoreHorizontal,
+  ArrowLeft,
+  Plus,
+  Pencil,
+  Trash2,
+  Wheat,
+  ShoppingCart,
+  Receipt,
+  Check
 } from 'lucide-react';
 
 // Mapping of icon names to actual icon components
 const icons = {
-  user: FaUserCircle,
-  logout: IoLogOut,
-  search: IoSearchOutline,
-  dropdown: FaAngleDown,
-  filter: IoFilterOutline,
-  close1: IoCloseOutline,
-  actions: HiDotsHorizontal,
-  back: IoArrowBack,
+  user: Users,
+  logout: LogOut,
+  search: Search,
+  dropdown: ChevronRight,
+  filter: Filter,
+  close1: X,
+  actions: MoreHorizontal,
+  back: ArrowLeft,
   dashboard: LayoutGrid,
-  membersGroup: LucideUsers,
+  membersGroup: Users,
   feesDocument: FileText,
-  menu: LucideMenu,
+  menu: Menu,
   chevronRight: ChevronRight,
   creditCard: CreditCard,
   barChart: BarChart2,
   trendingUp: TrendingUp,
   alertCircle: AlertCircle,
-  add: IoAdd,
+  add: Plus,
   lock: Lock,
   building: Building,
-  // Added mappings for edit and delete
-  edit: IoPencilOutline,
-  delete: IoTrashOutline,
-  // New admin navigation icons
+  edit: Pencil,
+  delete: Trash2,
+  check: Check,
   accountManagement: UserCog,
   products: Package,
   orders: ShoppingBag,
   salesReport: BarChart,
-  wheat: LuWheat,
-  cart: FaShoppingCart,
-  invoice: FaFileInvoiceDollar
+  wheat: Wheat,
+  cart: ShoppingCart,
+  invoice: Receipt
 };
 
 const Icons = ({ name, size, color, className, ...props }) => {

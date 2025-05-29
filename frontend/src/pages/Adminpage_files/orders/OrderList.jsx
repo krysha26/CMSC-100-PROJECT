@@ -179,17 +179,17 @@ const OrderList = ({ orders, onUpdateStatus }) => {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => onUpdateStatus(order._id, 1)}
-                    className="inline-flex items-center px-2.5 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-green-700 hover:bg-green-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 transition-colors duration-200"
                     title="Mark order as completed"
+                    className="bg-transparent border-none cursor-pointer p-0 flex hover:text-green-600 transition-colors rounded"
                   >
-                    ✓
+                    <Icons name="check" size={18} color="currentColor" />
                   </button>
                   <button
                     onClick={() => onUpdateStatus(order._id, 2)}
-                    className="inline-flex items-center px-2.5 py-1 border border-transparent text-xs font-medium rounded-md text-white bg-red-700 hover:bg-red-800 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500 transition-colors duration-200"
                     title="Cancel this order"
+                    className="bg-transparent border-none cursor-pointer p-0 flex hover:text-red-600 transition-colors rounded"
                   >
-                    ✕
+                    <Icons name="delete" size={18} color="currentColor" />
                   </button>
                 </div>
               ) : (

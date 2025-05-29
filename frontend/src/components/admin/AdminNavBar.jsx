@@ -94,6 +94,23 @@ const AdminNavBar = ({ isOpen, toggleSidebar }) => {
           />
         ))}
       </nav>
+
+      {/* Logout button at the bottom */}
+      <div className={`mt-auto mb-6 ${isOpen ? 'pl-3' : 'px-3'}`}>
+        <button
+          onClick={() => {
+            // Add logout logic here
+            console.log('Logout clicked');
+          }}
+          className={`flex items-center h-10 text-md text-gray-100 hover:bg-white/5 rounded-l-2xl transition-colors duration-200 w-full
+            ${isOpen ? 'px-14' : 'px-0 justify-center rounded-2xl pointer-cursor'}
+          `}
+          title={!isOpen ? 'Logout' : ''}
+        >
+          <Icons name="logout" size={20} color="white" className={`${isOpen ? "mr-3" : "mr-0"} transform rotate-180`} />
+          {isOpen && <span className="whitespace-nowrap">Logout</span>}
+        </button>
+      </div>
     </div>
   );
 };
