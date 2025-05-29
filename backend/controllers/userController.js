@@ -97,7 +97,7 @@ const signIn = async (req, res) => {
   
     res.status(200).json({
       token,
-      user: { id: user._id } // Add email as well
+      user: { id: user._id, email: user.email } // Add email as well
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

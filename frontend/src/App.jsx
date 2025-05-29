@@ -6,6 +6,7 @@ import AccountManagement from "./pages/Adminpage_files/AccountManagement";
 import SignIn from "./pages/SignIn";
 import Products from "./pages/Adminpage_files/Products";
 import Cart from "./pages/Cart";
+import Orders from "./pages/Orders";
 import { useState, useEffect } from "react"; // ✅ include useEffect
 
 function App() {
@@ -40,6 +41,10 @@ function App() {
     {
       path: "/cart",
       element: <Cart cart={cart} setCart={setCart} />
+    },
+     {
+      path: "/orders",
+      element: <Orders cart={cart} setCart={setCart} />
     },
   ];
 

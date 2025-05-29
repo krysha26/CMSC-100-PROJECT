@@ -12,8 +12,10 @@ const getOrder = async (req, res) => {
 
 // GET /api/orders/user/:email
 const getOrderByUser = async (req, res) => {
+   console.log('went here');
   try {
     const orders = await Order.find({ email: req.params.email }).populate("productId");
+   
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
@@ -22,6 +24,7 @@ const getOrderByUser = async (req, res) => {
 
 // GET /api/orders
 const getAllOrders = async (req, res) => {
+  console.log('got all orders')
   try {
     const orders = await Order.find().populate("productId");
     res.json(orders);

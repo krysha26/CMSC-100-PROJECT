@@ -24,7 +24,14 @@
           Cart 
         </NavLink> 
           </li> 
-          <li href="#">Orders</li> {/*Add nav link */}
+          <li>
+            <NavLink
+            to="/orders"
+            className={({ isActive }) => (isActive ? 'active-link' : 'not-active')} >
+            Orders 
+          </NavLink> 
+            
+          </li> {/*Add nav link */}
         </ul>
 
       </div>
