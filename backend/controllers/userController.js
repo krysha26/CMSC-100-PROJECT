@@ -4,7 +4,7 @@ import mongoose from "mongoose";
 
 // import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import jwt from "jsonwebtoken";
+
 
 // GET /api/users/:id
 const getUser = async (req, res) => {
