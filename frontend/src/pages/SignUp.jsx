@@ -33,13 +33,14 @@ function SignUp() {
 
   
   return (
-    <div className='mainContainer'>
-      <div className='imageContainer'></div>
-      <div className='container'>
-        <h1>Sign Up. </h1>
-        <form onSubmit={handleSignIn} className='form'>
+    <div className='signup'>
+      <div className='signup__image-section'></div>
+      <div className='signup__form-section'>
+        <h1 className='signup__title'>Sign Up.</h1>
+        <form onSubmit={handleSignIn} className='signup__form'>
           <p>Email Address:</p>
           <input
+            className='signup__form-input'
             type='email'
             placeholder='Email'
             value={email}
@@ -48,14 +49,14 @@ function SignUp() {
           />
           <p>Password:</p>
           <input
+            className='signup__form-input'
             type='password'
             placeholder='Password'
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
           />
-          <button type='submit'>Sign Up</button>
-          
+          <button type='submit' className='signup__submit-button'>Sign Up</button>
         </form>
         <ToastContainer/>
       </div>

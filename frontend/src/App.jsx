@@ -2,9 +2,12 @@ import "./App.css";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Shop from "./pages/Shop";
 import SignUp from "./pages/SignUp";
-import AccountManagement from "./pages/Adminpage_files/AccountManagement";
 import SignIn from "./pages/SignIn";
+import AdminLayout from "./pages/Adminpage_files/AdminLayout";
+import AccountManagement from "./pages/Adminpage_files/AccountManagement";
 import Products from "./pages/Adminpage_files/Products";
+import AdminOrder from "./pages/Adminpage_files/AdminOrder";
+import AdminReport from "./pages/Adminpage_files/AdminReport";
 
 function App() {
   const routes = [ // Add child parameter
@@ -21,12 +24,26 @@ function App() {
       element: <Shop />,
     },
     {
-      path: "/account-management",
-      element: <AccountManagement />,
-    },
-    {
-      path: "/products",
-      element: <Products />  // <-- Add this route
+      path: "/admin",
+      element: <AdminLayout />,
+      children: [
+        {
+          path: "account-management",
+          element: <AccountManagement />,
+        },
+        {
+          path: "products",
+          element: <Products />,
+        },
+        {
+          path: "orders",
+          element: <AdminOrder />,
+        },
+        {
+          path: "sales-report",
+          element: <AdminReport />,
+        }
+      ]
     }
   ];
   
