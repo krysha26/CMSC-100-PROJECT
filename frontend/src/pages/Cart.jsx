@@ -46,6 +46,35 @@ const Cart = ({ cart, setCart }) => {
     setsubTot(computed);
   }, [item]);
 
+
+  const handleCheckout = async () => {
+    try {
+      for (const prod of item) {
+        const productId = prod[5];
+        const orderQuantity = prod[7] || 1;
+        const status = 0; //  Pending
+
+        await axios.post('http://localhost:5000/api/orders/', {
+          productId,
+          orderQuantity,
+          orderStatus: status,
+          email: 'dummyemail@gmail.com', // Change this to real user email if available
+          dateOrdered: new Date(),
+          time: new Date().toLocaleTimeString(),
+        });
+      }
+      toast.success("Successfully added to orders!", {
+        autoClose: 2000,
+      });
+      // Optionally clear cart after checkout
+      setCart([]);
+      setItems([]);
+    } catch (error) {
+      console.error("Error during checkout:", error);
+      toast.error("Checkout failed. Please try again." )
+    }
+  };
+
   return (
     <div className='cartSection'>
       <Navbar />
@@ -166,8 +195,10 @@ const Cart = ({ cart, setCart }) => {
               </Stack>    
          </Card>
                 {/*Add Button Here For Checkout Traverse(items) Add To Cart */}
-                  <Button variant="contained" color="primary" sx={{backgroundColor:'#1D8B37',fontFamily:'Poppins'}}>
-                Checkout
+                <Button 
+                  onClick={handleCheckout}
+                  variant="contained" color="primary" sx={{backgroundColor:'#1D8B37',fontFamily:'Poppins'}}>
+                  Checkout
                 </Button>
 
           </Stack>
