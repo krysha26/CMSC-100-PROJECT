@@ -18,8 +18,6 @@ const farmerImages = [
   farmerImage5
 ];
 
-
-
 const AccountManagement = () => {
   const [accounts, setAccounts] = useState([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);

@@ -7,7 +7,7 @@ import AdminLayout from "./pages/Adminpage_files/AdminLayout";
 import AccountManagement from "./pages/Adminpage_files/account-management/AccountManagement";
 import Products from "./pages/Adminpage_files/products/Products";
 import AdminOrder from "./pages/Adminpage_files/orders/AdminOrder";
-import AdminReport from "./pages/Adminpage_files/AdminReport";
+import AdminReport from "./pages/Adminpage_files/reports/AdminReport";
 
 function App() {
   const routes = [ // Add child parameter
@@ -40,7 +40,7 @@ function App() {
           element: <AdminOrder />,
         },
         {
-          path: "sales-report",
+          path: "reports",
           element: <AdminReport />,
         }
       ]

@@ -39,7 +39,7 @@ const AdminNavBar = ({ isOpen, toggleSidebar }) => {
     {
       name: 'Reports',
       iconName: 'salesReport',
-      path: '/admin/sales-report'
+      path: '/admin/reports'
     },
   ];
 
