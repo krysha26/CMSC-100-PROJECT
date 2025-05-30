@@ -5,16 +5,14 @@ html, body, #root {
   height: 100%;
   width: 100%;
   background-color: white;
+  /* Force overlay scrollbars to prevent layout shift */
+  scrollbar-gutter: stable overlay;
 }
-
 
 body {
   background-color: rgb(255, 255, 255);
   color: white;
-  
 }
-
-
 
 @font-face {
   font-family: 'PoppinsB';
@@ -38,7 +36,6 @@ body {
   width: 100%;
   font-family: 'Poppins';
 }
-
 
 .imageContainer {
   background-color: #ffffff;
@@ -79,7 +76,6 @@ body {
   color: black;
   background-color: rgb(255, 255, 255);
 }
-
 
 /*Toast */
 .custom-toast {
@@ -139,8 +135,7 @@ body {
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
-
-/* For modern WebKit browsers (Chrome, Edge, Safari) */
+/* Modern overlay scrollbars - dark green with lowered opacity */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
@@ -151,11 +146,17 @@ body {
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #ccc;
+  background: rgba(34, 139, 34, 0.4); /* Dark green with 40% opacity */
   border-radius: 4px;
   transition: background 0.3s ease;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #999;
+  background: rgba(34, 139, 34, 0.7); /* Darker green with 70% opacity on hover */
+}
+
+/* For Firefox */
+html {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(34, 139, 34, 0.4) transparent;
 }

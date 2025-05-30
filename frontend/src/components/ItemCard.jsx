@@ -72,7 +72,7 @@ const ItemCard = ({ price, name, stock, category, desc, productId, quantity, set
           open={open}
           onClose={() => setOpen(false)}
           onAction2={handleAdd}
-          props={[price, name, stock, category, desc, productId, quantity, photo]}
+          props={[price, name, stock, category, desc, productId, photo, quantity]}
           stock={stock}
           setStock={setStock}
           quantity={quantity}
@@ -158,7 +158,7 @@ const ItemCard = ({ price, name, stock, category, desc, productId, quantity, set
               </Typography>
             </Box>
             <Chip
-              label={category == 2 ? 'Wheat':'Poultry'}
+              label={category === 1 ? 'Crop' : 'Poultry'}
               sx={{ fontFamily: 'PoppinsR', borderRadius: 1 }}
               color="success"
               size="small"

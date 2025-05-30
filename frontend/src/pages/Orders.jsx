@@ -166,9 +166,9 @@ const Orders = ({ cart, setCart }) => {
                     key={order._id} // orders unique id
                     title={product.productName}
                     description={product.productDescription}
-                    imageUrl="https://cdn.pixabay.com/photo/2022/09/05/09/50/tomatoes-7433786_640.jpg"
+                    imageUrl={product.photo || "https://via.placeholder.com/206x200"}
                     price={product.productPrice}
-                    count={order.quantity || 1}
+                    count={order.orderQuantity || 1}
                     cart={cart}
                     setCart={setItems}
                     productId={product._id} // send to cart if needed

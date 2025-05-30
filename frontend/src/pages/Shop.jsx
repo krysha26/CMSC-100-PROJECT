@@ -52,19 +52,19 @@ const Shop = ({cart, setCart}) => {
 
   // Count logic based on category
   const countItems = (products) => {
+    let crop = 0;
     let poultry = 0;
-    let wheat = 0;
 
     products.forEach((item) => {
       if (item.productType === 1) {
-        poultry += item.productQuantity;
+        crop += item.productQuantity;
       } else if (item.productType === 2) {
-        wheat += item.productQuantity;
+        poultry += item.productQuantity;
       }
     });
 
+    setWheatCount(crop);
     setPoultryCount(poultry);
-    setWheatCount(wheat);
   };
 
   return (
@@ -114,6 +114,7 @@ const Shop = ({cart, setCart}) => {
               setStock={item.productType === 1 ? setPoultryCount : setWheatCount}
               cart={cart}
               setCart={setCart}
+              photo={item.photo || "https://via.placeholder.com/206x200"}
             />
           ))}
         </div>

@@ -10,7 +10,7 @@ import {
 } from '@mui/material';
 import Stepper from './Stepper';
 import DeleteIcon from '@mui/icons-material/Delete';
-import toast from 'react-hot-toast';
+import { toast } from 'react-hot-toast';
 
 const CardBox = ({ title, description, imageUrl, price, productId, count, cart, setCart }) => {
   const handleDelete = () => {
@@ -19,12 +19,35 @@ const CardBox = ({ title, description, imageUrl, price, productId, count, cart, 
   };
 
   const handleQuantityChange = (newQuantity) => {
+    // Find the current item in cart
+    const currentItem = cart.find(item => item[5] === productId);
+    if (!currentItem) return;
+
+    // Get the original stock from the item
+    const originalStock = currentItem[2];
+    const currentCartQuantity = parseInt(currentItem[7]) || 0;
+    const quantityDifference = newQuantity - currentCartQuantity;
+
+    // Check if we have enough stock
+    if (newQuantity > originalStock) {
+      toast.error('Not enough stock available');
+      return;
+    }
+
+    // Update cart with new quantity
     setCart((prevCart) =>
       prevCart.map(item => {
         if (item[5] === productId) {
-          const newItem = [...item];
-          newItem[6] = newQuantity;
-          return newItem;
+          return [
+            item[0], // price
+            item[1], // name
+            item[2], // stock
+            item[3], // category
+            item[4], // description
+            item[5], // productId
+            item[6], // photo
+            newQuantity // new quantity
+          ];
         }
         return item;
       })
@@ -76,7 +99,13 @@ const CardBox = ({ title, description, imageUrl, price, productId, count, cart, 
                   {description}
                 </Typography>
               </Box>
-              <Stepper value={count} onChange={handleQuantityChange} width="8%" height="30%" />
+              <Stepper 
+                value={parseInt(count) || 1} 
+                onChange={handleQuantityChange} 
+                width="8%" 
+                height="30%" 
+                maxValue={cart.find(item => item[5] === productId)?.[2] || 1}
+              />
             </Box>
 
             {/* Info col 2 */}

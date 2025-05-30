@@ -55,10 +55,35 @@ const Cart = ({ cart, setCart }) => {
     }
 
     try {
+      // First, update all product quantities
       for (const prod of item) {
         const productId = prod[5];
-        const orderQuantity = prod[7] || 1;
+        const orderQuantity = parseInt(prod[7]) || 1;
 
+        // First, get the current product details to get its actual stock
+        const productResponse = await axios.get(`https://anico-api.vercel.app/api/products/${productId}`, {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
+        
+        const currentProductStock = parseInt(productResponse.data.productQuantity) || 0;
+        
+        if (orderQuantity > currentProductStock) {
+          toast.error(`Not enough stock available for ${prod[1]}`);
+          return;
+        }
+
+        // Update product quantity in database with the correct stock
+        await axios.put(`https://anico-api.vercel.app/api/products/${productId}`, {
+          productQuantity: currentProductStock - orderQuantity
+        }, {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
+
+        // Create order
         await axios.post('https://anico-api.vercel.app/api/orders/', {
           productId,
           orderQuantity,
@@ -74,12 +99,17 @@ const Cart = ({ cart, setCart }) => {
         duration: 2000,
       });
 
+      // Clear cart after successful checkout
       setCart([]);
       setItems([]);
     } catch (error) {
-      console.error('Error creating order:', error);
+      console.error('Error during checkout:', error);
       if (error.response?.status === 401) {
         toast.error('Please sign in to place an order');
+      } else if (error.response?.status === 400) {
+        toast.error('Failed to update product quantities');
+      } else if (error.response?.status === 404) {
+        toast.error('Product not found');
       } else {
         toast.error('Failed to place order');
       }
@@ -119,7 +149,7 @@ const Cart = ({ cart, setCart }) => {
                   key={`${item[5]}-${item[6]}`}
                   title={item[1]}
                   description={item[4]}
-                  imageUrl='https://t3.ftcdn.net/jpg/02/57/54/58/360_F_257545862_MK4YSramzD8GICDZEQygA0nUQUaSiLvu.jpg'
+                  imageUrl={item[6] || "https://via.placeholder.com/206x200"}
                   price={item[0]}
                   count={item[7]}
                   cart={cart}

@@ -31,46 +31,58 @@ const ActionModal = ({ open, onClose, onAction2, props, stock, setStock, quantit
       return;
     }
 
-    setCart((prevCart) => {
-      const existingIndex = prevCart.findIndex(item => item[5] === props[5]);
+    // Ensure cart is an array before proceeding
+    const currentCart = Array.isArray(cart) ? cart : [];
+    
+    const existingIndex = currentCart.findIndex(item => item[5] === props[5]);
 
-      if (existingIndex !== -1) {
-        const updatedCart = [...prevCart];
-        const currentQuantity = updatedCart[existingIndex][7] || 0;
-        const newQuantity = currentQuantity + pickedQuant;
+    if (existingIndex !== -1) {
+      // Item exists in cart, update quantity
+      const updatedCart = [...currentCart];
+      const currentQuantity = parseInt(updatedCart[existingIndex][7]) || 0;
+      const newQuantity = currentQuantity + pickedQuant;
 
-        if (newQuantity > locQuant) {
-          toast.error('Not enough stock available');
-          return prevCart;
-        }
-
-        updatedCart[existingIndex] = [
-          ...updatedCart[existingIndex].slice(0, 7),
-          newQuantity
-        ];
-
-        onAction2?.();
-        onClose();
-
-        setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
-        setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
-        setStock(prev => (prev > 0 ? prev - pickedQuant : 0));
-        toast.success("Added to cart!");
-
-        return updatedCart;
-      } else {
-        const newItem = [...props, pickedQuant];
-
-        onAction2?.();
-        onClose();
-
-        setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
-        setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
-        setStock(prev => (prev > 0 ? prev - pickedQuant : 0));
-        toast.success("Added to cart!");
-        return [...prevCart, newItem];
+      if (newQuantity > locQuant) {
+        toast.error('Not enough stock available');
+        return;
       }
-    });
+
+      // Update the cart item with new quantity
+      updatedCart[existingIndex] = [
+        props[0], // price
+        props[1], // name
+        props[2], // stock
+        props[3], // category
+        props[4], // desc
+        props[5], // productId
+        props[6], // photo
+        newQuantity // quantity
+      ];
+
+      setCart(updatedCart);
+    } else {
+      // Add new item to cart with proper structure
+      const newItem = [
+        props[0], // price
+        props[1], // name
+        props[2], // stock
+        props[3], // category
+        props[4], // desc
+        props[5], // productId
+        props[6], // photo
+        pickedQuant // quantity
+      ];
+      setCart([...currentCart, newItem]);
+    }
+
+    // Update stock quantities
+    setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
+    setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
+    setStock(prev => (prev > 0 ? prev - pickedQuant : 0));
+    
+    toast.success("Added to cart!");
+    onAction2?.();
+    onClose();
   };
 
   return (
@@ -125,8 +137,8 @@ const ActionModal = ({ open, onClose, onAction2, props, stock, setStock, quantit
           >
             <CardMedia
               component="img"
-              image="https://cdn.britannica.com/89/140889-050-EC3F00BF/Ripening-heads-rice-Oryza-sativa.jpg"
-              sx={{ width: '100%', height: '100%' }}
+              image={props[6] || "https://via.placeholder.com/206x200"}
+              sx={{ width: '100%', height: '100%', objectFit: 'cover' }}
             />
 
             <Box
@@ -145,7 +157,7 @@ const ActionModal = ({ open, onClose, onAction2, props, stock, setStock, quantit
                 <CardMedia
                   key={index}
                   component="img"
-                  image="https://cdn.britannica.com/89/140889-050-EC3F00BF/Ripening-heads-rice-Oryza-sativa.jpg"
+                  image={props[6] || "https://via.placeholder.com/206x200"}
                   sx={{
                     maxWidth: '30%',
                     width: 'auto',

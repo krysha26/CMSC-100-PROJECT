@@ -97,13 +97,21 @@ const AdminOrder = () => {
           order._id === orderId ? res.data : order
         )
       );
-      toast.success('Order status updated successfully');
+
+      // Show appropriate success message based on status
+      if (newStatus === 1) {
+        toast.success('Order marked as completed');
+      } else if (newStatus === 2) {
+        toast.success('Order cancelled and stock restored');
+      }
     } catch (err) {
       console.error('Error updating order status:', err);
       if (err.response?.status === 403) {
         toast.error('You do not have permission to update orders');
       } else if (err.response?.status === 401) {
         toast.error('Please sign in to update orders');
+      } else if (err.response?.status === 404) {
+        toast.error('Order or product not found');
       } else {
         toast.error('Failed to update order status');
       }
