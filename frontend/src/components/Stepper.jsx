@@ -2,10 +2,24 @@ import React from 'react';
 import { Box, IconButton, Typography } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 import RemoveIcon from '@mui/icons-material/Remove';
+import { toast } from 'react-hot-toast';
 
-const Stepper = ({ value, onChange, width = '400px', height = '40px' }) => {
-  const handleIncrement = () => onChange(value + 1);
-  const handleDecrement = () => onChange(Math.max(1, value - 1));
+const Stepper = ({ value, onChange, width = '400px', height = '40px', maxValue = Infinity }) => {
+  const handleIncrement = () => {
+    if (value >= maxValue) {
+      toast.error('Maximum quantity reached');
+      return;
+    }
+    onChange(value + 1);
+  };
+
+  const handleDecrement = () => {
+    if (value <= 1) {
+      toast.error('Minimum quantity is 1');
+      return;
+    }
+    onChange(value - 1);
+  };
 
   return (
     <Box
@@ -30,9 +44,9 @@ const Stepper = ({ value, onChange, width = '400px', height = '40px' }) => {
           color: value <= 1 ? '#ccc' : '#1A1A1A',
           '&:hover': {
             backgroundColor: 'transparent',
-            '&:hover, &:active, &:focus, &:focus-visible': { // Prevent from showing outline
-            backgroundColor: 'transparent',
-            outline: 'none',
+            '&:hover, &:active, &:focus, &:focus-visible': {
+              backgroundColor: 'transparent',
+              outline: 'none',
             },
           },
         }}
@@ -41,7 +55,7 @@ const Stepper = ({ value, onChange, width = '400px', height = '40px' }) => {
         <RemoveIcon fontSize="inherit" />
       </IconButton>
 
-      <Typography fontFamily="PoppinsR" fontSize="16px" color='#1A1A1A' >
+      <Typography fontFamily="PoppinsR" fontSize="16px" color='#1A1A1A'>
         {value}
       </Typography>
 
@@ -51,13 +65,14 @@ const Stepper = ({ value, onChange, width = '400px', height = '40px' }) => {
           p: 0,
           width: 24,
           height: 24,
-          color: '#1A1A1A',
+          color: value >= maxValue ? '#ccc' : '#1A1A1A',
           fontSize: 16,
-         '&:hover, &:active, &:focus, &:focus-visible': {
+          '&:hover, &:active, &:focus, &:focus-visible': {
             backgroundColor: 'transparent',
             outline: 'none',
-            },
+          },
         }}
+        disabled={value >= maxValue}
       >
         <AddIcon fontSize="inherit" />
       </IconButton>

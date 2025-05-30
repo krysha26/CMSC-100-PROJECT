@@ -68,6 +68,33 @@ const Products = () => {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    
+    // Special handling for price and quantity
+    if (name === 'productPrice' || name === 'productQuantity') {
+      // Convert to number and validate
+      const numValue = Number(value);
+      
+      // If empty string, allow it (for backspace/delete operations)
+      if (value === '') {
+        setNewProduct((prev) => ({ ...prev, [name]: '' }));
+        return;
+      }
+      
+      // Check if it's a valid number and not negative
+      if (!isNaN(numValue) && numValue >= 0) {
+        // For price, limit to 2 decimal places
+        if (name === 'productPrice') {
+          const roundedValue = Math.round(numValue * 100) / 100;
+          setNewProduct((prev) => ({ ...prev, [name]: roundedValue }));
+        } else {
+          // For quantity, ensure it's a whole number
+          setNewProduct((prev) => ({ ...prev, [name]: Math.floor(numValue) }));
+        }
+      }
+      return;
+    }
+    
+    // Handle other inputs normally
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
@@ -251,9 +278,13 @@ return (
                     name="productPrice"
                     value={newProduct.productPrice}
                     onChange={handleInputChange}
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none transition"
                     required
                   />
+                  <p className="mt-1 text-sm text-gray-500">Enter a positive number with up to 2 decimal places</p>
                 </div>
                 <div>
                   <label className="block text-sm font-medium text-gray-700">Description</label>
@@ -273,9 +304,13 @@ return (
                     name="productQuantity"
                     value={newProduct.productQuantity}
                     onChange={handleInputChange}
+                    min="0"
+                    step="1"
+                    placeholder="0"
                     className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none transition"
                     required
                   />
+                  <p className="mt-1 text-sm text-gray-500">Enter a positive whole number</p>
                 </div>
                 <div className="flex justify-end gap-3 pt-4">
                   <button
