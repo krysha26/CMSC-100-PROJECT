@@ -5,6 +5,7 @@
   import { FaCircleUser } from "react-icons/fa6";
 
   const Navbar = () => {
+    
     return (
     <nav className = "navBar">
       <div className="logoPlace">
@@ -14,11 +15,23 @@
         <ul className="routePage">
          <li> <NavLink
           to="/shop"
-          className={({ isActive }) => (isActive ? 'active-link' : '')} >
+          className={({ isActive }) => (isActive ? 'active-link' : 'not-active')} >
           Shop 
         </NavLink> </li>
-          <li href="#">Cart</li> {/*Add nav link */}
-          <li href="#">Orders</li>
+          <li>  <NavLink
+          to="/cart"
+          className={({ isActive }) => (isActive ? 'active-link' : 'not-active')} >
+          Cart 
+        </NavLink> 
+          </li> 
+          <li>
+            <NavLink
+            to="/orders"
+            className={({ isActive }) => (isActive ? 'active-link' : 'not-active')} >
+            Orders 
+          </NavLink> 
+            
+          </li> 
         </ul>
 
       </div>

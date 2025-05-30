@@ -22,6 +22,7 @@ const getAllProducts = async (req, res) => {
 
 // POST /api/products
 const addProduct = async (req, res) => {
+  console.log("went here")
   try {
     const product = new Product(req.body);
     await product.save();

@@ -38,11 +38,13 @@ const updateUser = async (req, res) => {
   }
 };
 
+
 // In controller
 const deleteUser = async (req, res) => {
-  const { id } = req.params;
+  const {id} = req.params;
 
-  // Add this:
+
+  // Add validation logging
   console.log('Received ID:', id);
   console.log('Valid ObjectId:', mongoose.Types.ObjectId.isValid(id));
 
@@ -55,9 +57,13 @@ const deleteUser = async (req, res) => {
     const deleted = await User.findByIdAndDelete(id);
     if (!deleted) {
       return res.status(404).json({ message: 'User not found' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.status(200).json({ message: 'User deleted successfully' });
+    res.status(200).json({ message: 'User deleted successfully' });
   } catch (err) {
+    console.error('Error deleting user:', err);
+    res.status(500).json({ error: 'Failed to delete user' });
     console.error('Error deleting user:', err);
     res.status(500).json({ error: 'Failed to delete user' });
   }
@@ -67,12 +73,16 @@ const deleteUser = async (req, res) => {
 const signUp = async (req, res) => {
   try {
     console.log('Here')
+    console.log('Here')
     // const user = new User(req.body);
+
+    console.log(req.body);
 
     console.log(req.body);
     const { email, password } = req.body;
     const existing = await User.findOne({ email });
     let user; // so user can be used outside of the block scope
+    console.log(existing);
     console.log(existing);
     if (existing) 
      return res.status(400).json({ message: "User already exists" });
@@ -91,20 +101,30 @@ const signUp = async (req, res) => {
 
 // POST /api/users/signIn
 const signIn = async (req, res) => {
+  
   const { email, password } = req.body;
+    
   try {
+    
+    console.log("Request body:", email);
+    console.log("Request pw:", password);
+    
+    
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid email" });
-
+    console.log("Request body:", user.password);
+    console.log("user id", user._id);
     const isMatch = await argon2.verify(user.password, password);
+    console.log("match:",isMatch);// Changed positioning of hashed password and entered password
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+    const token = jwt.sign({ id: user._id }, 'random', { // ADD API IN .ENV
       expiresIn: "1d", // Token expiration
     });
+    console.log("token here:" );
   
     res.status(200).json({
       token,
-      user: { id: user._id, email: user.email }
+      user: { id: user._id, email: user.email } // Add email as well
     });
   } catch (err) {
     res.status(500).json({ error: err.message });

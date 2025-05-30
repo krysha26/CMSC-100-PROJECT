@@ -33,6 +33,7 @@
 li {
   list-style: none;
   position: relative;
+
 }
 
 
@@ -51,6 +52,7 @@ li::after {
   transition: transform .3s;
 }
 
+
 li:hover::after {
   transform-origin: left;
   transform: scaleX(1);
@@ -64,6 +66,17 @@ li:hover::after {
   color: #1D8B37;
   transform: scaleX(0);
 }
+
+
+.not-active {
+  color: #1A1A1A;
+}
+.not-active:hover {
+  color: #1A1A1A;
+
+}
+
+
 
 
 

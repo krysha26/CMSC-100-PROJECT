@@ -1,8 +1,19 @@
 @import "tailwindcss";
 
-.no-scrollbar::-webkit-scrollbar {
-  display: none;
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  width: 100%;
+  background-color: white;
 }
+
+
+body {
+  background-color: rgb(255, 255, 255);
+  color: white;
+  
+}
+
 
 
 @font-face {
@@ -20,3 +31,131 @@
   src: url(assets/fonts/poppins/Poppins-Regular.ttf);
 }
 
+.mainContainer {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  height: 100%; 
+  width: 100%;
+  font-family: 'Poppins';
+}
+
+
+.imageContainer {
+  background-color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.5rem;
+}
+
+.imageContainer {
+  background-image: url('assets/img/bgtest.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 10rem;
+  background-color: white;
+  color: black;
+  font-family: 'Poppins';
+}
+
+.container p {
+  font-size: 12px;
+}
+
+.form input {
+  display: block;
+  width: 100%;
+  margin-bottom: 1rem;
+  padding: 0.5rem;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  color: black;
+  background-color: rgb(255, 255, 255);
+}
+
+
+/*Toast */
+.custom-toast {
+  position: relative;
+  padding: 16px;
+  padding-top: 4px;
+  background-color: #fff;
+  color: #000;
+  font-family: 'Poppins';
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+}
+
+.custom-toast-body {
+  font-family: 'Poppins';
+  font-size: 14px;
+}
+
+.custom-toast-close {
+  position: absolute;
+  top: 8px;
+  right: 6px;
+  margin-right: 10px;
+  background: none;
+  border: none;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  color: #444;
+  width: 0;
+}
+
+.custom-toast-close:hover {
+  color: #000;
+  background-color: transparent;
+}
+
+.titleSection {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: -20px;
+}
+
+.buttonRd {
+  border-radius: 8px;
+  padding: 3px 20px; /* vertical and horizontal padding */
+  align-items: center;
+  display: flex;
+  flex-direction: row;
+  gap: 5px;
+  font-size: 16px;
+  border: none;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+
+/* For modern WebKit browsers (Chrome, Edge, Safari) */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #ccc;
+  border-radius: 4px;
+  transition: background 0.3s ease;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
