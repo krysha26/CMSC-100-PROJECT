@@ -180,20 +180,20 @@ const OrderList = ({ orders, onUpdateStatus }) => {
                   <button
                     onClick={() => onUpdateStatus(order._id, 1)}
                     title="Mark order as completed"
-                    className="bg-transparent border-none cursor-pointer p-0 flex hover:text-green-600 transition-colors rounded"
+                    className="bg-transparent border-none cursor-pointer p-1 flex items-center justify-center rounded hover:bg-green-50 transition-colors"
                   >
-                    <Icons name="check" size={18} color="currentColor" />
+                    <Icons name="check" size={18} color="#1D8B37" />
                   </button>
                   <button
                     onClick={() => onUpdateStatus(order._id, 2)}
                     title="Cancel this order"
-                    className="bg-transparent border-none cursor-pointer p-0 flex hover:text-red-600 transition-colors rounded"
+                    className="bg-transparent border-none cursor-pointer p-1 flex items-center justify-center rounded hover:bg-red-50 transition-colors"
                   >
-                    <Icons name="delete" size={18} color="currentColor" />
+                    <Icons name="delete" size={18} color="#DC2626" />
                   </button>
                 </div>
               ) : (
-                <span className={`text-sm ${order.orderStatus === 1 ? 'text-gray-400' : 'text-gray-400'}`}>
+                <span className={`text-sm font-medium ${order.orderStatus === 1 ? 'text-green-600' : 'text-red-600'}`}>
                   {order.orderStatus === 1 ? 'Completed' : 'Cancelled'}
                 </span>
               )}

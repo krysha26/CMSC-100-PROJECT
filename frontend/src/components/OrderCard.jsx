@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 import {
   Card,
   CardContent,
@@ -14,6 +16,7 @@ import {
 
 
 const OrdCardBox = ({ title, description, imageUrl, productId, status, orderId, setProducts }) => {
+  const { auth } = useAuth();
   const [openSnackbar, setOpenSnackbar] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
   const [snackbarSeverity, setSnackbarSeverity] = useState('success');
@@ -22,19 +25,25 @@ const OrdCardBox = ({ title, description, imageUrl, productId, status, orderId, 
 
   const handleDelete = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/orders/${orderId}`);
+      await axios.delete(`https://anico-api.vercel.app/api/orders/${orderId}`, {
+        headers: {
+          'Authorization': `Bearer ${auth.accessToken}`
+        }
+      });
 
       // Remove deleted order from products state
       setProducts((prev) => prev.filter(order => order._id !== orderId));
 
-      setSnackbarMessage('Order cancelled successfully');
-      setSnackbarSeverity('success');
-      setOpenSnackbar(true);
+      toast.success('Order cancelled successfully');
     } catch (error) {
       console.error('Error deleting order:', error);
-      setSnackbarMessage('Failed to cancel order');
-      setSnackbarSeverity('error');
-      setOpenSnackbar(true);
+      if (error.response?.status === 403) {
+        toast.error('You are not authorized to cancel this order');
+      } else if (error.response?.status === 401) {
+        toast.error('Please sign in to cancel orders');
+      } else {
+        toast.error('Failed to cancel order');
+      }
     }
   };
 

@@ -6,15 +6,22 @@ import {
     addOrder, 
     updateOrder, 
     deleteOrder 
-  } from "../controllers/orderController.js";
+} from "../controllers/orderController.js";
+import { auth, checkRole } from '../middleware/auth.js';
 
-  const router = express.Router();
+const router = express.Router();
 
-  router.get("/:id", getOrder);
-  router.get("/user/:email", getOrderByUser);
-  router.get("/", getAllOrders);
-  router.post("/", addOrder);
-  router.put("/:id", updateOrder);
-  router.delete("/:id", deleteOrder);
-  
-  export default router;
+// Protected routes - require authentication
+router.use(auth);
+
+// Customer routes
+router.get("/my-orders", getOrderByUser); // Get own orders
+router.post("/", addOrder); // Create order
+router.delete("/:id", deleteOrder); // Delete own order
+
+// Admin routes
+router.get("/", checkRole(['admin']), getAllOrders); // Get all orders (admin only)
+router.get("/:id", checkRole(['admin']), getOrder); // Get specific order (admin only)
+router.put("/:id", checkRole(['admin']), updateOrder); // Update order status (admin only)
+
+export default router;

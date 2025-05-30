@@ -1,30 +1,18 @@
 import Order from '../models/Order.js';
 
-// GET /api/orders/:id
-const getOrder = async (req, res) => {
-  try {
-    const order = await Order.findById(req.params.id).populate("productId");
-    res.json(order);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-};
-
-// GET /api/orders/user/:email
+// GET /api/orders/my-orders
 const getOrderByUser = async (req, res) => {
-   console.log('went here');
   try {
-    const orders = await Order.find({ email: req.params.email }).populate("productId");
-   
+    // Use authenticated user's email
+    const orders = await Order.find({ email: req.user.email }).populate("productId");
     res.json(orders);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 };
 
-// GET /api/orders
+// GET /api/orders (admin only)
 const getAllOrders = async (req, res) => {
-  console.log('got all orders')
   try {
     const orders = await Order.find().populate("productId");
     res.json(orders);
@@ -33,11 +21,30 @@ const getAllOrders = async (req, res) => {
   }
 };
 
+// GET /api/orders/:id (admin only)
+const getOrder = async (req, res) => {
+  try {
+    const order = await Order.findById(req.params.id).populate("productId");
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+    res.json(order);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+};
+
 // POST /api/orders
 const addOrder = async (req, res) => {
-  console.log("confriming")
   try {
-    const order = new Order(req.body);
+    // Add authenticated user's email to the order
+    const orderData = {
+      ...req.body,
+      email: req.user.email,
+      dateOrdered: new Date(),
+      time: new Date().toLocaleTimeString()
+    };
+    const order = new Order(orderData);
     await order.save();
     res.status(201).json(order);
   } catch (err) {
@@ -45,10 +52,18 @@ const addOrder = async (req, res) => {
   }
 };
 
-// PUT /api/orders/:id
+// PUT /api/orders/:id (admin only)
 const updateOrder = async (req, res) => {
   try {
-    const updated = await Order.findByIdAndUpdate(req.params.id, req.body, { new: true }).populate("productId");
+    const updated = await Order.findByIdAndUpdate(
+      req.params.id, 
+      req.body, 
+      { new: true }
+    ).populate("productId");
+    
+    if (!updated) {
+      return res.status(404).json({ message: "Order not found" });
+    }
     res.json(updated);
   } catch (err) {
     res.status(400).json({ error: err.message });
@@ -58,6 +73,17 @@ const updateOrder = async (req, res) => {
 // DELETE /api/orders/:id
 const deleteOrder = async (req, res) => {
   try {
+    const order = await Order.findById(req.params.id);
+    
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
+    }
+
+    // Check if user owns the order or is admin
+    if (order.email !== req.user.email && req.user.role !== 'admin') {
+      return res.status(403).json({ message: "Not authorized to delete this order" });
+    }
+
     await Order.findByIdAndDelete(req.params.id);
     res.json({ message: "Order deleted" });
   } catch (err) {
@@ -65,4 +91,4 @@ const deleteOrder = async (req, res) => {
   }
 };
 
-export {getOrder, getOrderByUser, getAllOrders, addOrder, updateOrder, deleteOrder};
+export { getOrder, getOrderByUser, getAllOrders, addOrder, updateOrder, deleteOrder };

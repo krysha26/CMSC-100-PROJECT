@@ -11,51 +11,67 @@ import {
 import CloseIcon from '@mui/icons-material/Close';
 import Stepper from './Stepper';
 import { toast } from 'react-hot-toast';
+import { useAuth } from '../context/AuthContext';
 import "../App.css";
 
 const ActionModal = ({ open, onClose, onAction2, props, stock, setStock, quantity, setProdQuantity, cart, setCart }) => {
-    const[pickedQuant,setPickedQuant] = useState(1);
-    const[locQuant,setQuant] = useState(quantity);
+  const { auth } = useAuth();
+  const [pickedQuant, setPickedQuant] = useState(1);
+  const [locQuant, setQuant] = useState(quantity);
 
-const handleAddToCart = () => {
-  setCart((prevCart) => {
-    const existingIndex = prevCart.findIndex(item => item[5] === props[5]);
-
-    if (existingIndex !== -1) {
-      const updatedCart = [...prevCart];
-      const currentQuantity = updatedCart[existingIndex][7] || 0;
-      updatedCart[existingIndex] = [
-        ...updatedCart[existingIndex].slice(0, 7),
-        currentQuantity + pickedQuant
-      ];
-
-      
-      onAction2?.();
+  const handleAddToCart = () => {
+    if (!auth.accessToken) {
+      toast.error('Please sign in to add items to cart');
       onClose();
-
-      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
-      setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
-      setStock(prev => (prev > 0 ? prev - quantity : 0));
-      toast.success("Added to cart!");
-
-      return updatedCart;
-
-    } else {
-      const newItem = [...props, pickedQuant];
-
-      
-      onAction2?.();
-      onClose();
-
-      setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
-      setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
-      setStock(prev => (prev > 0 ? prev - quantity : 0));
-      toast.success("Added to cart!");
-      return [...prevCart, newItem];
+      return;
     }
-  });
-};
 
+    if (pickedQuant > locQuant) {
+      toast.error('Not enough stock available');
+      return;
+    }
+
+    setCart((prevCart) => {
+      const existingIndex = prevCart.findIndex(item => item[5] === props[5]);
+
+      if (existingIndex !== -1) {
+        const updatedCart = [...prevCart];
+        const currentQuantity = updatedCart[existingIndex][7] || 0;
+        const newQuantity = currentQuantity + pickedQuant;
+
+        if (newQuantity > locQuant) {
+          toast.error('Not enough stock available');
+          return prevCart;
+        }
+
+        updatedCart[existingIndex] = [
+          ...updatedCart[existingIndex].slice(0, 7),
+          newQuantity
+        ];
+
+        onAction2?.();
+        onClose();
+
+        setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
+        setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
+        setStock(prev => (prev > 0 ? prev - pickedQuant : 0));
+        toast.success("Added to cart!");
+
+        return updatedCart;
+      } else {
+        const newItem = [...props, pickedQuant];
+
+        onAction2?.();
+        onClose();
+
+        setQuant(prev => (prev > 0 ? prev - pickedQuant : 0));
+        setProdQuantity(prev => (prev > 0 ? prev - pickedQuant : 0));
+        setStock(prev => (prev > 0 ? prev - pickedQuant : 0));
+        toast.success("Added to cart!");
+        return [...prevCart, newItem];
+      }
+    });
+  };
 
   return (
     <Modal open={open} onClose={onClose}>

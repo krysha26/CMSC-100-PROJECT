@@ -22,8 +22,8 @@ const AccountList = ({ accounts, onDeleteAccount, onEditAccount, onViewAccount, 
 
   const sortedAccounts = [...accounts].sort((a, b) => {
     if (sortConfig.key === 'fullName') {
-      const nameA = `${a?.firstName || ''} ${a?.middleName ? a.middleName + ' ' : ''}${a?.lastName || ''}`.trim();
-      const nameB = `${b?.firstName || ''} ${b?.middleName ? b.middleName + ' ' : ''}${b?.lastName || ''}`.trim();
+      const nameA = `${a?.firstName || ''} ${a?.middleName ? a.middleName + ' ' : ''}${a?.lastName || ''}`.trim() || 'No Name';
+      const nameB = `${b?.firstName || ''} ${b?.middleName ? b.middleName + ' ' : ''}${b?.lastName || ''}`.trim() || 'No Name';
       return sortConfig.direction === 'asc'
         ? nameA.localeCompare(nameB)
         : nameB.localeCompare(nameA);
@@ -58,30 +58,33 @@ const AccountList = ({ accounts, onDeleteAccount, onEditAccount, onViewAccount, 
       
       {/* Scrollable content */}
       <div className="flex-1 overflow-y-auto min-h-0">
-        {sortedAccounts.map((account) => (
-          <div
-            key={account._id}
-            className="grid grid-cols-[2fr_2fr_1.5fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50"
-          >
-            <span className="break-words text-gray-800 cursor-pointer">
-              {`${account.firstName} ${account.middleName ? account.middleName + ' ' : ''}${account.lastName}`}
-            </span>
-            <span className="break-words text-gray-800 cursor-pointer">{account.email}</span>
-            
-            {/* Extended Action Buttons */}
-            <div className="flex items-center justify-center gap-2">
-              {onDeleteAccount && (
-                <button
-                  onClick={() => onDeleteAccount(account._id)}
-                  title="Delete Account"
-                  className="bg-transparent border-none cursor-pointer flex hover:text-red-600 transition-colors rounded ml-auto"
-                >
-                  <Icons name="delete" size={18} color="currentColor" />
-                </button>
-              )}
+        {sortedAccounts.map((account) => {
+          const fullName = `${account?.firstName || ''} ${account?.middleName ? account.middleName + ' ' : ''}${account?.lastName || ''}`.trim() || 'No Name';
+          return (
+            <div
+              key={account._id}
+              className="grid grid-cols-[2fr_2fr_1.5fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50"
+            >
+              <span className="break-words text-gray-800 cursor-pointer">
+                {fullName}
+              </span>
+              <span className="break-words text-gray-800 cursor-pointer">{account.email || 'No Email'}</span>
+              
+              {/* Extended Action Buttons */}
+              <div className="flex items-center justify-center gap-2">
+                {onDeleteAccount && (
+                  <button
+                    onClick={() => onDeleteAccount(account._id)}
+                    title="Delete Account"
+                    className="bg-transparent border-none cursor-pointer flex hover:text-red-600 transition-colors rounded ml-auto"
+                  >
+                    <Icons name="delete" size={18} color="gray" />
+                  </button>
+                )}
+              </div>
             </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
     </div>
   );

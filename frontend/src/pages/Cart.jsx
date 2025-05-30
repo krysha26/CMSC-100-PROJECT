@@ -17,8 +17,10 @@ import CheckBoxIcon from '@mui/icons-material/CheckBox';
 import { Button } from '@mui/material';
 import { toast } from 'react-hot-toast';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 const Cart = ({ cart, setCart }) => {
+  const { auth } = useAuth();
   const [item, setItems] = useState(cart);
   const [orders, setOrders] = useState([]);
   const [products, setProducts] = useState([]); // full product details
@@ -47,33 +49,42 @@ const Cart = ({ cart, setCart }) => {
 
 
   const handleCheckout = async () => {
-  try {
-    for (const prod of item) {
-      const productId = prod[5];
-      const orderQuantity = prod[7] || 1;
-      const status = 0;
-
-      await axios.post('https://anico-api.vercel.app/api/orders/', {
-        productId,
-        orderQuantity,
-        orderStatus: status,
-        email: 'dummyemail@gmail.com',
-        dateOrdered: new Date(),
-        time: new Date().toLocaleTimeString(),
-      });
+    if (!auth.accessToken) {
+      toast.error('Please sign in to place an order');
+      return;
     }
 
-    toast.success("Successfully added to orders!", {
-      duration: 2000,
-    });
+    try {
+      for (const prod of item) {
+        const productId = prod[5];
+        const orderQuantity = prod[7] || 1;
 
-    setCart([]);
-    setItems([]);
-  } catch (error) {
-    console.error("Error during checkout:", error);
-    toast.error("Checkout failed. Please try again.");
-  }
-};
+        await axios.post('https://anico-api.vercel.app/api/orders/', {
+          productId,
+          orderQuantity,
+          orderStatus: 0
+        }, {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
+      }
+
+      toast.success("Successfully added to orders!", {
+        duration: 2000,
+      });
+
+      setCart([]);
+      setItems([]);
+    } catch (error) {
+      console.error('Error creating order:', error);
+      if (error.response?.status === 401) {
+        toast.error('Please sign in to place an order');
+      } else {
+        toast.error('Failed to place order');
+      }
+    }
+  };
 
 
   return (

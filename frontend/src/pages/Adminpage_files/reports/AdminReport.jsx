@@ -3,8 +3,11 @@ import AdminHeader from '../AdminHeader';
 import axios from 'axios';
 import ReportList from './ReportList';
 import { format, subDays, subMonths, isWithinInterval, parseISO, startOfDay, endOfDay } from 'date-fns';
+import { useAuth } from '../../../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const SalesReport = () => {
+  const { auth } = useAuth();
   const [orders, setOrders] = useState([]);
   const [aggregatedData, setAggregatedData] = useState([]);
   const [startDate, setStartDate] = useState(null);
@@ -16,11 +19,27 @@ const SalesReport = () => {
   const [error, setError] = useState(null);
   const [dateRangeDisplay, setDateRangeDisplay] = useState('');
 
+  useEffect(() => {
+    if (auth.accessToken) {
+      fetchOrders();
+    } else {
+      setError('Please sign in to view reports');
+      setIsLoading(false);
+    }
+  }, [auth.accessToken]);
+
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await axios.get('https://anico-api.vercel.app/api/orders');
+      console.log('Fetching orders with token:', auth.accessToken);
+      
+      const res = await axios.get('https://anico-api.vercel.app/api/orders', {
+        headers: {
+          'Authorization': `Bearer ${auth.accessToken}`
+        }
+      });
+      
       if (Array.isArray(res.data)) {
         setOrders(res.data);
         // Set initial aggregated data
@@ -31,18 +50,24 @@ const SalesReport = () => {
       } else {
         setError('Invalid data format received from server');
         console.error('Expected an array of orders but got:', res.data);
+        toast.error('Failed to load orders');
       }
     } catch (error) {
-      setError('Failed to fetch orders');
       console.error('Error fetching orders:', error);
+      if (error.response?.status === 401) {
+        setError('Please sign in to view reports');
+        toast.error('Please sign in to view reports');
+      } else if (error.response?.status === 403) {
+        setError('You do not have permission to view reports');
+        toast.error('Access denied: Admin privileges required');
+      } else {
+        setError('Failed to fetch orders');
+        toast.error('Failed to fetch orders');
+      }
     } finally {
       setIsLoading(false);
     }
   };
-
-  useEffect(() => {
-    fetchOrders();
-  }, []);
 
   const getDateRange = (period) => {
     if (!startDate) return null;

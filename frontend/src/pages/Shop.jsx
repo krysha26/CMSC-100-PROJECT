@@ -6,31 +6,49 @@ import { CiWheat } from "react-icons/ci";
 import { IoMdArrowDropdown } from "react-icons/io";
 import './Shop.css';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
- 
-
-  
-const Shop = ({cart,setCart}) => {
-
+const Shop = ({cart, setCart}) => {
+  const { auth } = useAuth();
   const [items, setItems] = useState([]);
   const [poultryCount, setPoultryCount] = useState(0);
   const [wheatCount, setWheatCount] = useState(0);
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // Fetch items and then count
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const response = await axios.get('https://anico-api.vercel.app/api/products/');
+        setIsLoading(true);
+        setError(null);
+        
+        const response = await axios.get('https://anico-api.vercel.app/api/products/', {
+          headers: auth.accessToken ? {
+            'Authorization': `Bearer ${auth.accessToken}`
+          } : {}
+        });
+        
         const products = response.data;
         setItems(products);
-        countItems(products); // count based on fetched data
+        countItems(products);
       } catch (error) {
         console.error('Failed to fetch items:', error);
+        if (error.response?.status === 401) {
+          setError('Please sign in to view products');
+          toast.error('Please sign in to view products');
+        } else {
+          setError('Failed to fetch products');
+          toast.error('Failed to fetch products');
+        }
+      } finally {
+        setIsLoading(false);
       }
     };
 
     fetchItems();
-  }, []);
+  }, [auth.accessToken]);
 
   // Count logic based on category
   const countItems = (products) => {
@@ -73,29 +91,33 @@ const Shop = ({cart,setCart}) => {
         <hr />
       </div>
 
-      <div className="foodCards">
-        {items.map((item, index) => {
-          const setCount = item.productType === 1 ? setPoultryCount : setWheatCount;
-          const origCount = item.productType === 1 ? poultryCount : wheatCount;
-
-          return (
+      {isLoading ? (
+        <div className="flex items-center justify-center h-64">
+          <p className="text-gray-500">Loading products...</p>
+        </div>
+      ) : error ? (
+        <div className="flex items-center justify-center h-64">
+          <p className="text-red-500">{error}</p>
+        </div>
+      ) : (
+        <div className="foodCards">
+          {items.map((item) => (
             <ItemCard
-              key={index}
+              key={item._id}
               price={item.productPrice}
               name={item.productName}
-              stock={origCount}
+              stock={item.productType === 1 ? poultryCount : wheatCount}
               category={item.productType}
               desc={item.productDescription}
               productId={item._id}
-              quantity={item.productQuantity} // Pass product quantity
-              setStock={setCount} // Pass the correct setter for count
+              quantity={item.productQuantity}
+              setStock={item.productType === 1 ? setPoultryCount : setWheatCount}
               cart={cart}
-              setCart={setCart} // Pass setCart
+              setCart={setCart}
             />
-          );
-        })}
-      </div>
-
+          ))}
+        </div>
+      )}
     </div>
   );
 };

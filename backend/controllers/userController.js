@@ -72,28 +72,28 @@ const deleteUser = async (req, res) => {
 // POST /api/users/signUp
 const signUp = async (req, res) => {
   try {
-    console.log('Here')
-    console.log('Here')
-    // const user = new User(req.body);
-
-    console.log(req.body);
-
-    console.log(req.body);
-    const { email, password } = req.body;
+    console.log('SignUp request body:', req.body);
+    const { email, password, firstName, lastName } = req.body;
     const existing = await User.findOne({ email });
-    let user; // so user can be used outside of the block scope
-    console.log(existing);
-    console.log(existing);
-    if (existing) 
-     return res.status(400).json({ message: "User already exists" });
-    else{ 
-      const hashedPassword = await argon2.hash(password);
-      user = new User({ email, password: hashedPassword });
-      await user.save(); // to save user
+    
+    if (existing) {
+      return res.status(400).json({ message: "User already exists" });
     }
     
+    const hashedPassword = await argon2.hash(password);
+    const user = new User({ 
+      email, 
+      password: hashedPassword,
+      firstName,
+      lastName,
+      role: email === 'admin@anico.com' ? 'admin' : 'customer'
+    });
+    
+    await user.save();
+    console.log('Created user:', user);
     res.status(201).json(user);
   } catch (err) {
+    console.error('SignUp error:', err);
     res.status(400).json({ error: err.message });
   }
 };
@@ -101,32 +101,48 @@ const signUp = async (req, res) => {
 
 // POST /api/users/signIn
 const signIn = async (req, res) => {
-  
   const { email, password } = req.body;
     
   try {
-    
     console.log("Request body:", email);
     console.log("Request pw:", password);
     
-    
     const user = await User.findOne({ email });
     if (!user) return res.status(401).json({ message: "Invalid email" });
+
+    // Set admin role for specific email
+    const ADMIN_EMAIL = 'admin@anico.com';
+    if (email === ADMIN_EMAIL) {
+      // Update role for existing admin account
+      user.role = 'admin';
+      await user.save();
+    } else if (!user.role) {
+      // Set default role for existing users without a role
+      user.role = 'customer';
+      await user.save();
+    }
+
     console.log("Request body:", user.password);
     console.log("user id", user._id);
     const isMatch = await argon2.verify(user.password, password);
-    console.log("match:",isMatch);// Changed positioning of hashed password and entered password
+    console.log("match:", isMatch);
     if (!isMatch) return res.status(401).json({ message: "Invalid password" });
-    const token = jwt.sign({ id: user._id }, 'random', { // ADD API IN .ENV
-      expiresIn: "1d", // Token expiration
+
+    const token = jwt.sign({ id: user._id }, 'random', {
+      expiresIn: "1d",
     });
     console.log("token here:" );
   
     res.status(200).json({
       token,
-      user: { id: user._id, email: user.email } // Add email as well
+      user: { 
+        id: user._id, 
+        email: user.email,
+        role: user.role // Include role in response
+      }
     });
   } catch (err) {
+    console.error("Sign in error:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -138,7 +154,44 @@ const signOut = async (req, res) => {
   res.json({ message: "Signed out successfully" });
 };
 
-export {getUser,getAllUsers,updateUser,deleteUser,signUp, signIn, signOut}
+// Update existing users with default names
+const updateExistingUsers = async (req, res) => {
+  try {
+    const users = await User.find({ $or: [
+      { firstName: { $exists: false } },
+      { lastName: { $exists: false } }
+    ]});
+    
+    console.log('Found users to update:', users.length);
+    
+    for (const user of users) {
+      // Extract name from email (everything before @)
+      const emailName = user.email.split('@')[0];
+      // Capitalize first letter
+      const defaultName = emailName.charAt(0).toUpperCase() + emailName.slice(1);
+      
+      user.firstName = user.firstName || defaultName;
+      user.lastName = user.lastName || 'User';
+      await user.save();
+    }
+    
+    res.json({ message: `Updated ${users.length} users with default names` });
+  } catch (err) {
+    console.error('Error updating users:', err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+export {
+  getUser,
+  getAllUsers,
+  updateUser,
+  deleteUser,
+  signUp,
+  signIn,
+  signOut,
+  updateExistingUsers
+};
 
 
 // import mongoose from "mongoose";

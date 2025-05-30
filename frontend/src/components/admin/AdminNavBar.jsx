@@ -1,7 +1,9 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import Icons from '../common/Icons';
 import AnicoIcon from '../../assets/img/ANICO_icon-admin.png'; // Your image import
+import { useAuth } from '../../context/AuthContext';
+import { toast } from 'react-toastify';
 
 export const NavItem = ({ iconName, text, path, isActive, isOpen }) => (
   <Link
@@ -19,6 +21,14 @@ export const NavItem = ({ iconName, text, path, isActive, isOpen }) => (
 
 const AdminNavBar = ({ isOpen, toggleSidebar }) => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout } = useAuth();
+
+  const handleLogout = () => {
+    logout();
+    toast.success('Logged out successfully');
+    navigate('/signIn');
+  };
 
   const navItems = [
     {
@@ -98,10 +108,7 @@ const AdminNavBar = ({ isOpen, toggleSidebar }) => {
       {/* Logout button at the bottom */}
       <div className={`mt-auto mb-6 ${isOpen ? 'pl-3' : 'px-3'}`}>
         <button
-          onClick={() => {
-            // Add logout logic here
-            console.log('Logout clicked');
-          }}
+          onClick={handleLogout}
           className={`flex items-center h-10 text-md text-gray-100 hover:bg-white/5 rounded-l-2xl transition-colors duration-200 w-full
             ${isOpen ? 'px-14' : 'px-0 justify-center rounded-2xl pointer-cursor'}
           `}

@@ -1,22 +1,46 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useAuth } from '../../../context/AuthContext';
+import { toast } from 'react-hot-toast';
 import AdminHeader from '../AdminHeader';
 import OrderList from './OrderList';
 
 const AdminOrder = () => {
+  const { auth } = useAuth();
   const [orders, setOrders] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    fetchOrders();
-  }, []);
+    // Log auth state when component mounts or auth changes
+    console.log('Current auth state:', auth);
+    console.log('Token from sessionStorage:', sessionStorage.getItem('accessToken'));
+    
+    if (auth.accessToken) {
+      fetchOrders();
+    } else {
+      console.log('No access token available');
+      setError('Please sign in to view orders');
+      setIsLoading(false);
+    }
+  }, [auth.accessToken]);
 
   const fetchOrders = async () => {
     try {
       setIsLoading(true);
       setError(null);
-      const res = await axios.get('https://anico-api.vercel.app/api/orders');
+      
+      // Log the request details
+      console.log('Making request with token:', auth.accessToken);
+      
+      const res = await axios.get('https://anico-api.vercel.app/api/orders', {
+        headers: {
+          'Authorization': `Bearer ${auth.accessToken}`
+        }
+      });
+      
+      console.log('Orders response:', res.data);
+      
       if (Array.isArray(res.data)) {
         setOrders(res.data);
       } else {
@@ -24,8 +48,32 @@ const AdminOrder = () => {
         console.error('Expected an array of orders but got:', res.data);
       }
     } catch (err) {
-      setError('Failed to fetch orders');
-      console.error('Error fetching orders:', err);
+      console.error('Error details:', {
+        message: err.message,
+        status: err.response?.status,
+        statusText: err.response?.statusText,
+        responseData: err.response?.data,
+        requestConfig: {
+          url: err.config?.url,
+          method: err.config?.method,
+          headers: err.config?.headers
+        }
+      });
+      
+      if (err.response?.status === 403) {
+        setError('You do not have permission to view orders');
+        toast.error('Access denied: Admin privileges required');
+      } else if (err.response?.status === 401) {
+        setError('Please sign in to view orders');
+        toast.error('Please sign in to view orders');
+        // Clear invalid token
+        sessionStorage.removeItem('accessToken');
+        sessionStorage.removeItem('userRole');
+        sessionStorage.removeItem('userEmail');
+      } else {
+        setError('Failed to fetch orders');
+        toast.error('Failed to fetch orders');
+      }
     } finally {
       setIsLoading(false);
     }
@@ -33,9 +81,15 @@ const AdminOrder = () => {
 
   const handleUpdateStatus = async (orderId, newStatus) => {
     try {
-      const res = await axios.put(`https://anico-api.vercel.app/api/orders/${orderId}`, {
-        orderStatus: newStatus
-      });
+      const res = await axios.put(
+        `https://anico-api.vercel.app/api/orders/${orderId}`,
+        { orderStatus: newStatus },
+        {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        }
+      );
       
       // Update local state with the response
       setOrders(prevOrders => 
@@ -43,8 +97,16 @@ const AdminOrder = () => {
           order._id === orderId ? res.data : order
         )
       );
+      toast.success('Order status updated successfully');
     } catch (err) {
       console.error('Error updating order status:', err);
+      if (err.response?.status === 403) {
+        toast.error('You do not have permission to update orders');
+      } else if (err.response?.status === 401) {
+        toast.error('Please sign in to update orders');
+      } else {
+        toast.error('Failed to update order status');
+      }
     }
   };
 

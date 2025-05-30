@@ -1,33 +1,53 @@
 import { useState } from 'react';
 import { ToastContainer, toast } from 'react-toastify';
-import { useNavigate } from 'react-router-dom';
-import { Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import Farm from '../assets/img/farm3.jpg'
 import AnicoLogo from '../assets/img/ANICO_icon-admin.png'
-
 import 'react-toastify/dist/ReactToastify.css';
-import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
 
 function SignIn() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
+    const location = useLocation();
+    const { login } = useAuth();
+
+    // Get the redirect path from location state or default to appropriate route
+    const from = location.state?.from?.pathname || '/';
 
     const handleSignIn = async (e) => {
         e.preventDefault();
+        setIsLoading(true);
+
         try {
-            await axios.post('https://anico-api.vercel.app/api/users/signIn', {
-                email: email,
-                password: password,
-            });
-            toast.success("Sign in successful!", {
-                autoClose: 1000,
-                onClose: () => navigate('/shop') // Navigate to shop
-            });
+            const { success, role } = await login(email, password);
+            
+            if (success) {
+                toast.success("Sign in successful!", {
+                    autoClose: 1000,
+                });
+
+                // Navigate based on role
+                switch (role) {
+                    case 'admin':
+                        navigate('/admin/account-management');
+                        break;
+                    case 'customer':
+                        navigate('/shop');
+                        break;
+                    default:
+                        navigate(from);
+                }
+            }
         } catch (error) {
-            toast.error("Sign in failed. Please try again");
+            console.error('Sign in error:', error);
+            toast.error(error.response?.data?.error || "Sign in failed. Please try again.");
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -78,7 +98,8 @@ function SignIn() {
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
                                     required
-                                    className="mt-1 block w-full px-5 py-3.5 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#094517]/20 focus:border-[#094517] sm:text-sm bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-400 transition duration-150"
+                                    disabled={isLoading}
+                                    className="mt-1 block w-full px-5 py-3.5 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#094517]/20 focus:border-[#094517] sm:text-sm bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-400 transition duration-150 disabled:opacity-50"
                                 />
                             </div>
                             <div className="space-y-1.5">
@@ -96,12 +117,14 @@ function SignIn() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                         required
-                                        className="mt-1 block w-full px-5 py-3.5 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#094517]/20 focus:border-[#094517] sm:text-sm bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-400 transition duration-150"
+                                        disabled={isLoading}
+                                        className="mt-1 block w-full px-5 py-3.5 border border-gray-200 rounded-xl shadow-sm focus:outline-none focus:ring-2 focus:ring-[#094517]/20 focus:border-[#094517] sm:text-sm bg-white/50 backdrop-blur-sm text-gray-900 placeholder-gray-400 transition duration-150 disabled:opacity-50"
                                     />
                                     <button
                                         type="button"
                                         onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-150"
+                                        disabled={isLoading}
+                                        className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-gray-600 transition-colors duration-150 disabled:opacity-50"
                                     >
                                         {showPassword ? (
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5">
@@ -118,9 +141,10 @@ function SignIn() {
                             </div>
                             <button
                                 type="submit"
-                                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-base font-bold text-white bg-[#094517] hover:bg-[#2D5732] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#094517] transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98]"
+                                disabled={isLoading}
+                                className="w-full flex justify-center py-4 px-4 border border-transparent rounded-xl shadow-lg text-base font-bold text-white bg-[#094517] hover:bg-[#2D5732] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#094517] transition-all duration-200 ease-in-out transform hover:scale-[1.02] active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                Sign In
+                                {isLoading ? 'Signing in...' : 'Sign In'}
                             </button>
                         </form>
                         <p className="mt-8 text-sm text-center text-gray-500">

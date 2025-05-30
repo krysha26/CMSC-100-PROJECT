@@ -18,8 +18,11 @@ import CheckCircleIcon from '@mui/icons-material/CheckCircle';
 import CancelIcon from '@mui/icons-material/Cancel';
 import OrdCardBox from '../components/OrderCard';
 import axios from 'axios';
+import { useAuth } from '../context/AuthContext';
+import { toast } from 'react-hot-toast';
 
 const Orders = ({ cart, setCart }) => {
+  const { auth } = useAuth();
   const [order,setOrder] = useState([]); // where fetched orders will be stored
   const [orderCount,setOrderCount] = useState([]); // order Count
   const [item, setItems] = useState(cart);
@@ -34,8 +37,11 @@ const Orders = ({ cart, setCart }) => {
   useEffect(() => {
     const fetchItems = async () => {
       try {
-        const email = "dummyemail@gmail.com"; // replace with actual logged-in user email
-        const response = await axios.get(`https://anico-api.vercel.app/api/orders/user/${email}`);
+        const response = await axios.get('https://anico-api.vercel.app/api/orders/my-orders', {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`
+          }
+        });
         const fetchedOrders = response.data;
 
         setOrders(fetchedOrders);
@@ -50,12 +56,20 @@ const Orders = ({ cart, setCart }) => {
         setProducts(productIds);
 
       } catch (error) {
-        console.error('Failed to fetch orders or products:', error);
+        console.error('Failed to fetch orders:', error);
+        if (error.response?.status === 401) {
+          // Handle unauthorized access
+          toast.error('Please sign in to view your orders');
+        } else {
+          toast.error('Failed to fetch orders');
+        }
       }
     };
 
-    fetchItems();
-  }, []);
+    if (auth.accessToken) {
+      fetchItems();
+    }
+  }, [auth.accessToken]);
 
   useEffect(()=> {
     const countItems = () => {
