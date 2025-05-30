@@ -1,5 +1,4 @@
-import React from 'react';
-import { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Card,
   CardContent,
@@ -13,15 +12,26 @@ import SearchIcon from '@mui/icons-material/Search';
 import AddIcon from '@mui/icons-material/Add';
 import ActionModal from './ItemInfo';
 
-const ItemCard = ({ price, name, stock, category, desc, productId, quantity, setStock,cart, setCart }) => {
-  const [open,setOpen] = useState(false);
-  const [productQuantity,setProdQuantity] = useState(quantity);
+const ItemCard = ({ price, name, stock, category, desc, productId, quantity, setStock, cart, setCart, photo }) => {
+  const [open, setOpen] = useState(false);
+  const [productQuantity, setProdQuantity] = useState(quantity);
+  const [pendingCartUpdate, setPendingCartUpdate] = useState(null);
 
+  // Handle cart updates in useEffect to prevent setState during render
+  useEffect(() => {
+    if (pendingCartUpdate !== null) {
+      setCart(pendingCartUpdate);
+      setPendingCartUpdate(null);
+    }
+  }, [pendingCartUpdate, setCart]);
 
-  {/* Function Handlers */}
-  const handleAdd =() => {
+  const handleAdd = () => {
     setOpen(false);
-  }
+  };
+
+  const handleCartUpdate = (newCart) => {
+    setPendingCartUpdate(newCart);
+  };
 
   return (
     <Box
@@ -55,21 +65,20 @@ const ItemCard = ({ price, name, stock, category, desc, productId, quantity, set
         <IconButton onClick={() => setOpen(true)} size="medium" sx={{ bgcolor: '#1D8B37', boxShadow: 2, '&:hover':{bgcolor:'#1D8B37'} }}>
           <SearchIcon fontSize="medium" sx={{ color: 'white' }} />
         </IconButton>
-        <IconButton onClick={() => setOpen(true)}  size="medium" sx={{ bgcolor: '#1D8B37', boxShadow: 2, '&:hover':{bgcolor:'#1D8B37'}  }}>
+        <IconButton onClick={() => setOpen(true)} size="medium" sx={{ bgcolor: '#1D8B37', boxShadow: 2, '&:hover':{bgcolor:'#1D8B37'} }}>
           <AddIcon fontSize="medium" sx={{ color: 'white' }} />
         </IconButton> 
-        {/*Sample Modal Used */} 
         <ActionModal
-        open={open}
-        onClose={() => setOpen(false)}
-        onAction2={handleAdd}
-        props={[price,name, stock ,category, desc,productId,quantity]}
-        stock={stock} // For total stock orig count
-        setStock ={setStock} // To update stock here
-        quantity ={quantity} // To update quantity 
-        setProdQuantity = {setProdQuantity} // To update product
-        cart={cart} // To fetch cart
-        setCart={setCart} // To update cart
+          open={open}
+          onClose={() => setOpen(false)}
+          onAction2={handleAdd}
+          props={[price, name, stock, category, desc, productId, quantity, photo]}
+          stock={stock}
+          setStock={setStock}
+          quantity={quantity}
+          setProdQuantity={setProdQuantity}
+          cart={cart}
+          setCart={handleCartUpdate}
         />
       </Box>
 
@@ -87,8 +96,8 @@ const ItemCard = ({ price, name, stock, category, desc, productId, quantity, set
           {/* Image */}
           <CardMedia
             component="img"
-            image="https://cdn.britannica.com/89/140889-050-EC3F00BF/Ripening-heads-rice-Oryza-sativa.jpg"
-            sx={{ height: '100%', width: '100%',  }}
+            image={photo || "https://via.placeholder.com/206x200"}
+            sx={{ height: '100%', width: '100%', objectFit: 'cover' }}
           />
 
            {/* Color Overlay */}

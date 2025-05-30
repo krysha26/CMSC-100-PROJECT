@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { ShoppingCart, Users, Shield, TrendingUp, Leaf, Heart, ArrowRight, CheckCircle, Star } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import AnicoMainIcon from '../assets/img/anico-main-icon.png';
+import axios from 'axios';
 
 const TypingText = ({ phrases, className }) => {
   const [displayText, setDisplayText] = useState('');
@@ -52,6 +53,7 @@ const TypingText = ({ phrases, className }) => {
 
 const AnicoOnboarding = () => {
   const [isScrolled, setIsScrolled] = useState(false);
+  const [userCount, setUserCount] = useState(0);
   const missionSectionRef = useRef(null);
 
   useEffect(() => {
@@ -60,6 +62,20 @@ const AnicoOnboarding = () => {
     };
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
+  useEffect(() => {
+    const fetchUserCount = async () => {
+      try {
+        const response = await axios.get('https://anico-api.vercel.app/api/users/count');
+        setUserCount(response.data.count);
+      } catch (error) {
+        console.error('Failed to fetch user count:', error);
+        // If the API call fails, we'll keep the default count at 0
+      }
+    };
+
+    fetchUserCount();
   }, []);
 
   const scrollToMission = () => {
@@ -79,7 +95,7 @@ const AnicoOnboarding = () => {
                 <img src={AnicoMainIcon} alt="ANICO" className="w-full h-full object-contain" />
               </div>
               <span className={`text-2xl font-bold transition-colors ${
-                isScrolled ? 'text-gray-900' : 'text-white'
+                isScrolled ? 'text-green-800' : 'text-white'
               }`}>ANICO</span>
             </div>
             <Link to="/signUp" className={`px-6 py-2.5 rounded-full font-semibold transition-all duration-300 ${
@@ -138,7 +154,7 @@ const AnicoOnboarding = () => {
             </div>
             <div className="flex items-center gap-2">
               <Users className="w-5 h-5" />
-              <span className="text-sm">10,000+ Miyembro</span>
+              <span className="text-sm">{userCount.toLocaleString()} Miyembro</span>
             </div>
             <div className="flex items-center gap-2">
               <Star className="w-5 h-5 fill-current" />

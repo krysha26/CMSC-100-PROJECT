@@ -19,7 +19,10 @@ const Products = () => {
     productType: 1,
     productPrice: '',
     productQuantity: '',
+    photo: ''
   });
+
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   useEffect(() => {
     if (auth.accessToken) {
@@ -43,6 +46,11 @@ const Products = () => {
       });
       
       if (Array.isArray(res.data)) {
+        console.log('Received products data:', res.data);
+        // Log each product's photo field
+        res.data.forEach(product => {
+          console.log(`Product ${product.productName} photo:`, product.photo);
+        });
         setProducts(res.data);
       } else {
         console.error('Expected an array of products but got:', res.data);
@@ -98,41 +106,47 @@ const Products = () => {
     setNewProduct((prev) => ({ ...prev, [name]: value }));
   };
 
-const handlePhotoUpload = (e) => {
-  const files = Array.from(e.target.files);
-  setNewProduct((prev) => ({
-    ...prev,
-    photos: prev.photos ? [...prev.photos, ...files] : files,  // Ensure photos is an array
-  }));
-};
-
-
-const handleAddProduct = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.post('https://anico-api.vercel.app/api/products', newProduct, {
-      headers: {
-        'Authorization': `Bearer ${auth.accessToken}`,
-        'Content-Type': 'application/json',
-      },
-    });
-
-    setProducts([...products, res.data]);
-    resetForm();
-    setIsModalOpen(false);
-    toast.success('Product added successfully');
-  } catch (err) {
-    console.error('Error adding product:', err);
-    if (err.response?.status === 401) {
-      toast.error('Please sign in to add products');
-    } else if (err.response?.status === 403) {
-      toast.error('You do not have permission to add products');
+  const handlePhotoChange = (e) => {
+    const url = e.target.value.trim();
+    setNewProduct(prev => ({
+      ...prev,
+      photo: url
+    }));
+    // Only set preview if URL is not empty
+    if (url) {
+      setPhotoPreview(url);
     } else {
-      toast.error('Failed to add product');
+      setPhotoPreview(null);
     }
-  }
-};
+  };
 
+  const handleAddProduct = async (e) => {
+    e.preventDefault();
+    try {
+      console.log('Adding product with data:', newProduct);
+      const res = await axios.post('https://anico-api.vercel.app/api/products', newProduct, {
+        headers: {
+          'Authorization': `Bearer ${auth.accessToken}`,
+          'Content-Type': 'application/json',
+        },
+      });
+      console.log('Add product response:', res.data);
+
+      setProducts([...products, res.data]);
+      resetForm();
+      setIsModalOpen(false);
+      toast.success('Product added successfully');
+    } catch (err) {
+      console.error('Error adding product:', err);
+      if (err.response?.status === 401) {
+        toast.error('Please sign in to add products');
+      } else if (err.response?.status === 403) {
+        toast.error('You do not have permission to add products');
+      } else {
+        toast.error('Failed to add product');
+      }
+    }
+  };
 
   const resetForm = () => {
     setNewProduct({
@@ -141,7 +155,9 @@ const handleAddProduct = async (e) => {
       productType: 1,
       productPrice: '',
       productQuantity: '',
+      photo: ''
     });
+    setPhotoPreview(null);
     setEditingProduct(null);
   };
 
@@ -166,52 +182,51 @@ const handleAddProduct = async (e) => {
     }
   };
 
-const handleEditSubmit = async (e) => {
-  e.preventDefault();
-  try {
-    const res = await axios.put(
-  `https://anico-api.vercel.app/api/products/${editingProduct._id}`,
-  newProduct,
-  {
-    headers: {
-      'Authorization': `Bearer ${auth.accessToken}`,
-      'Content-Type': 'application/json',
-    },
-  }
-);
+  const handleEditSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await axios.put(
+        `https://anico-api.vercel.app/api/products/${editingProduct._id}`,
+        newProduct,
+        {
+          headers: {
+            'Authorization': `Bearer ${auth.accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
 
-
-    setProducts(products.map((p) => (p._id === editingProduct._id ? res.data : p)));
-    resetForm();
-    setIsModalOpen(false);
-    toast.success('Product updated successfully');
-  } catch (err) {
-    console.error('Error updating product:', err);
-    if (err.response?.status === 401) {
-      toast.error('Please sign in to update products');
-    } else if (err.response?.status === 403) {
-      toast.error('You do not have permission to update products');
-    } else {
-      toast.error('Failed to update product');
+      setProducts(products.map((p) => (p._id === editingProduct._id ? res.data : p)));
+      resetForm();
+      setIsModalOpen(false);
+      toast.success('Product updated successfully');
+    } catch (err) {
+      console.error('Error updating product:', err);
+      if (err.response?.status === 401) {
+        toast.error('Please sign in to update products');
+      } else if (err.response?.status === 403) {
+        toast.error('You do not have permission to update products');
+      } else {
+        toast.error('Failed to update product');
+      }
     }
-  }
-};
+  };
 
+  const handleUpdateProduct = (product) => {
+    setEditingProduct(product);
+    setNewProduct({
+      productName: product.productName,
+      productDescription: product.productDescription,
+      productType: product.productType,
+      productPrice: product.productPrice,
+      productQuantity: product.productQuantity,
+      photo: product.photo || ''
+    });
+    setPhotoPreview(product.photo || null);
+    setIsModalOpen(true);
+  };
 
-
-const handleUpdateProduct = (product) => {
-  setEditingProduct(product);  // Set the product to be edited
-  setNewProduct({
-    productName: product.productName,
-    productDescription: product.productDescription,
-    productType: product.productType,
-    productPrice: product.productPrice,
-    productQuantity: product.productQuantity,
-  });
-  setIsModalOpen(true); // Open the modal
-};
-
-return (
+  return (
     <div className="products-page min-h-screen">
       <AdminHeader name="Order Management" />
       <div className="content-area p-6">
@@ -312,6 +327,39 @@ return (
                   />
                   <p className="mt-1 text-sm text-gray-500">Enter a positive whole number</p>
                 </div>
+
+                {/* Photo URL Input */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700">Product Photo URL</label>
+                  <div className="mt-1 flex items-center space-x-4">
+                    <div className="flex-shrink-0 h-24 w-24 rounded-lg overflow-hidden border border-gray-300">
+                      {photoPreview ? (
+                        <img
+                          src={photoPreview}
+                          alt="Preview"
+                          className="h-full w-full object-cover"
+                          onError={() => setPhotoPreview(null)}
+                        />
+                      ) : (
+                        <div className="h-full w-full bg-gray-100 flex items-center justify-center text-gray-400">
+                          No photo
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex-grow">
+                      <input
+                        type="url"
+                        name="photo"
+                        value={newProduct.photo}
+                        onChange={handlePhotoChange}
+                        placeholder="https://example.com/image.jpg"
+                        className="mt-1 block w-full rounded-md border border-gray-300 px-3 py-2 text-gray-900 placeholder-gray-400 focus:border-green-500 focus:ring-1 focus:ring-green-500 focus:outline-none transition"
+                      />
+                      <p className="mt-1 text-sm text-gray-500">Enter a URL to an image</p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="flex justify-end gap-3 pt-4">
                   <button
                     type="button"

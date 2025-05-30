@@ -33,8 +33,19 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
 
   return (
     <div className="flex flex-col h-full relative w-full">
+      <style>
+        {`
+          .description-scroll {
+            scrollbar-width: none !important;
+            -ms-overflow-style: none !important;
+          }
+          .description-scroll::-webkit-scrollbar {
+            display: none !important;
+          }
+        `}
+      </style>
       {/* Sticky header */}
-      <div className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr_0.8fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10 w-full">
+      <div className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_0.8fr] px-4 py-3 font-bold text-gray-600 border-b border-gray-200 bg-white sticky top-0 z-10 w-full">
         <button onClick={() => sortProducts('productName')} className="text-left hover:text-gray-800">
           Product Name {sortConfig.key === 'productName' && (sortConfig.direction === 'asc' ? '↑' : '↓')}
         </button>
@@ -61,16 +72,25 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
           sortedProducts.map((product) => (
             <div
               key={product._id}
-              className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_1fr_0.8fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50 w-full"
+              className="grid grid-cols-[1.5fr_1fr_1fr_2fr_1fr_0.8fr] px-4 py-4 border-b border-gray-100 items-center min-h-[50px] bg-white text-sm hover:bg-gray-50 w-full"
             >
               <div className="flex items-center space-x-3">
+                <div className="flex-shrink-0 h-10 w-10 overflow-hidden rounded-md bg-gray-100 flex items-center justify-center">
+                  <img 
+                    src={product.photo || "https://placehold.co/40x40/e5e7eb/666666?text=No+Img"} 
+                    alt={product.productName}
+                    className="h-full w-full object-cover object-center"
+                  />
+                </div>
                 <span className="flex justify-center items-center text-gray-800 break-words">{product.productName}</span>
               </div>
               <span className="flex text-gray-800 break-words">{renderType(product.productType)}</span>
               <span className="flex text-gray-800 break-words">₱{product.productPrice}</span>
-              <span className="flex justify-center items-center text-gray-800 break-words truncate">{product.productDescription}</span>
-              <span className="flex justify-center items-center text-gray-800 break-words">{product.productQuantity}</span>
-              <div className="flex justify-end space-x-2 pr-1">
+              <div className="description-scroll overflow-x-auto whitespace-nowrap">
+                <span className="text-gray-800">{product.productDescription}</span>
+              </div>
+              <span className="flex text-gray-800 break-words ml-4">{product.productQuantity}</span>
+              <div className="flex justify-end space-x-2">
                 <button
                   onClick={() => onUpdateProduct(product)}
                   className="inline-flex px-2.5 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 transition-colors duration-200"
@@ -84,7 +104,6 @@ const ProductList = ({ products, onDeleteProduct, onUpdateProduct }) => {
                   ✕
                 </button>
               </div>
-
             </div>
           ))
         )}
